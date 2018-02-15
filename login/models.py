@@ -7,6 +7,9 @@ class Group(models.Model):
     location = models.CharField(max_length=50)
     date = models.DateTimeField(default=timezone.now())
 
+    def __str__(self):
+        return self.name
+
 
 class User(models.Model):
     username = models.CharField(max_length=24, default='N/A')
@@ -14,3 +17,6 @@ class User(models.Model):
     email = models.EmailField(max_length=254)
     display_name = models.CharField(max_length=24)
     affiliations = models.ManyToManyField(Group)
+
+    def __str__(self):
+        return self.username

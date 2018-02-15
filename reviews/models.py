@@ -12,3 +12,6 @@ class Review(models.Model):
     description = models.TextField(max_length=2048)
     post = models.OneToOneField(Post)
     reviewer = models.ForeignKey(User)
+
+    def __str__(self):
+        return self.title

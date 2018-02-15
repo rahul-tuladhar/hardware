@@ -11,3 +11,6 @@ class Post(models.Model):
     price = models.FloatField(default=1.0)
     location = models.CharField(default='JPA')
     author = models.ForeignKey(User)
+
+    def __str__(self):
+        return self.title
