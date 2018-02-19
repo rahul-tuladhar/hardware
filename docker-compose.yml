@@ -6,6 +6,6 @@ models:
       - ./:/app
     ports:
       - "8001:8000"
-    command: bash -c "mod_wsgi-express start-server --working-directory ~/github/petsitting --reload-on-changes ~github/petsitting/petsitting/wsgi.py
+    command: bash -c "mod_wsgi-express start-server --working-directory /app --reload-on-changes /app/petsitting/wsgi.py
             && python3 manage.py makemigrations && python3 manage.py migrate
             && python3 manage.py loaddata db.json && python3 manage.py runserver"
