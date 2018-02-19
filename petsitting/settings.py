@@ -83,9 +83,9 @@ WSGI_APPLICATION = 'petsitting.wsgi.application'
 
 DATABASES = {
     'default': {
-          'ENGINE': 'django.db.backends.sqlite3',
-          'NAME': 'mysql',
-          'USER': 'root',
+          'ENGINE': 'django.db.backends.mysql',
+          'NAME': 'cs4501',
+          'USER': 'www',
           'PASSWORD': '$3cureUS',
           'HOST': 'db',
     }
