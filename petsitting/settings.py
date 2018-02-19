@@ -31,6 +31,9 @@ ALLOWED_HOSTS = []
 # Application definition
 
 INSTALLED_APPS = [
+    'login.apps.LoginConfig',
+    'posts.apps.PostsConfig',
+    'reviews.apps.ReviewsConfig',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -80,9 +83,9 @@ WSGI_APPLICATION = 'petsitting.wsgi.application'
 
 DATABASES = {
     'default': {
-          'ENGINE': 'django.db.backends.mysql',
-          'NAME': 'cs4501',
-          'USER': 'www',
+          'ENGINE': 'django.db.backends.sqlite3',
+          'NAME': 'mysql',
+          'USER': 'root',
           'PASSWORD': '$3cureUS',
           'HOST': 'db',
     }

@@ -1,17 +1,17 @@
 from django.db import models
-import timezone
+from django.utils import timezone
 
 
 class Group(models.Model):
     name = models.CharField(max_length=50)
     location = models.CharField(max_length=50)
-    date = models.DateTimeField(default=timezone.now())
+    date = models.DateTimeField(default=timezone.now)
 
     def __str__(self):
         return self.name
 
 
-class User(models.Model):
+class Profile(models.Model):
     username = models.CharField(max_length=24, default='N/A')
     password = models.CharField(max_length=50)
     email = models.EmailField(max_length=254)

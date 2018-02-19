@@ -1,14 +1,14 @@
 from django.contrib import admin
-from .models import Group, User
+from .models import Group, Profile
 
 # Register your models here.
 class GroupAdmin(admin.ModelAdmin):
     list_display = ('name', 'location', 'date')
 
 
-class UserAdmin(admin.ModelAdmin):
-    list_display = ('username', 'display_name', 'email', 'affiliations')
+class ProfileAdmin(admin.ModelAdmin):
+    list_display = ('username', 'display_name', 'email')
 
 
 admin.site.register(Group, GroupAdmin)
-admin.site.register(User, UserAdmin)
+admin.site.register(Profile, ProfileAdmin)
