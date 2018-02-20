@@ -21,20 +21,18 @@ def index(request):
     # context['posts'] = all_posts
     # return render(request, 'index.html', context
 
-    all_posts = Post.objects.all()
+    all_posts = Post.objects.all().values()
     post_list = list(all_posts)
-    return JSONResponse(post_list, safe=False)
-# >>>>>>> 61f57e2ca8d9e56b54902bb7c908d484bb9a3871
+    return JsonResponse(post_list, safe=False)
 
 def post_detail(request, post_title=None):
-    context = {}
     if request.method == 'GET':
         try:
-            post = Post.objects.get(title=post_title)
-            context['post'] = post
+            post = Post.objects.get(title=post_title).values()
+            post = list(post)
         except ObjectDoesNotExist:
-            context = {'error': 'object does not exist'}
-    return JsonResponse(context)
+            post = {'error': 'object does not exist'}
+    return JsonResponse(post)
 
 def edit_post(request, post_title=None):
     # context = {}
