@@ -1,13 +1,18 @@
 from django.shortcuts import render
 from .models import Post
 from .forms import PostEditForm
+from django.http import JsonResponse
 
 # Create your views here.
 def index(request):
-    context = {}
+    # context = {}
+    # all_posts = Post.objects.all()
+    # context['posts'] = all_posts
+    # return render(request, 'index.html', context
+
     all_posts = Post.objects.all()
-    context['posts'] = all_posts
-    return render(request, 'index.html', context)
+    post_list = list(all_posts)
+    return JSONResponse(post_list, safe=False)
 
 def post_detail(request, post_title=None):
     context = {}
