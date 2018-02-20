@@ -5,13 +5,26 @@ from django.http import JsonResponse
 import json
 
 # Create your views here.
-def index(request):
-    # response = JsonResponse(some_dictionary)
-    context = {}
-    all_posts = Post.objects.all()
+# def index(request):
+#     # response = JsonResponse(some_dictionary)
+#     context = {}
+#     all_posts = Post.objects.all()
     
-    context['posts'] = all_posts
-    return JsonResponse(context)
+#     context['posts'] = all_posts
+#     return JsonResponse(context)
+# =======
+
+# Create your views here.
+def index(request):
+    # context = {}
+    # all_posts = Post.objects.all()
+    # context['posts'] = all_posts
+    # return render(request, 'index.html', context
+
+    all_posts = Post.objects.all()
+    post_list = list(all_posts)
+    return JSONResponse(post_list, safe=False)
+# >>>>>>> 61f57e2ca8d9e56b54902bb7c908d484bb9a3871
 
 def post_detail(request, post_title=None):
     context = {}
