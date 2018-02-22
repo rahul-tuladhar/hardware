@@ -1,6 +1,7 @@
 from django.shortcuts import render
 from .models import Post
 from .forms import PostEditForm
+import json
 
 # Create your views here.
 def index(request):
