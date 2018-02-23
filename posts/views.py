@@ -24,11 +24,20 @@ def index(request):
     # return render(request, 'index.html', context
     if request.method == 'GET':
         try:
-            all_posts = Post.objects.all()
-            all_posts_dict = model_to_dict(all_posts)
+            all_posts_dict = {}
+            all_posts = Post.objects.all().values()
+            for post in all_posts:
+                all_posts_dict[post['title']] = post
         except ObjectDoesNotExist:
-            return JsonResponse({'status': 'ObjectDoesNotExist'})
+            all_posts_dict = {'status': 'ObjectDoesNotExist'}
+    if request.method == 'POST':
+        try:
+            all_posts = Post.objects.all().values()
+            all_posts_dict = {'status': 'Nothing to POST'}
+        except ObjectDoesNotExist:
+            all_posts_dict = {'status': 'ObjectDoesNotExist'}
     return JsonResponse(all_posts_dict, safe=False)
+
 
 def post_detail(request, post_title=None):
     if request.method == 'GET':
@@ -39,14 +48,15 @@ def post_detail(request, post_title=None):
         except ObjectDoesNotExist:
             post_dict = {'error': 'object does not exist'}
     if request.method == 'POST':
-        return JsonResponse({'status': 'nothing to POST, only viewing a post detail'})
+        post_dict = {'status': 'nothing to POST, only viewing a post detail'}
     return JsonResponse(post_dict, safe = False)
 
 
-def edit_post(request, post_title=None, post_author= None, post_description= None, post_price = None ):
+def edit_post(request):
     # context = {}
     if request.method == 'GET':
-        return JsonResponse({'status': 'should not get request edit_post'})
+        post_dict = {'status': 'should not get request edit_post'}
+
     if request.method == 'POST':
         try:
             post = Post.objects.get(title=post_title)
@@ -62,9 +72,9 @@ def edit_post(request, post_title=None, post_author= None, post_description= Non
             post_dict = model_to_dict(post)
             del post_dict['image']
         except ObjectDoesNotExist:
-            return JsonResponse({'status': False})
-        return JsonResponse(post_dict, safe=False)
-        
+            post_dict = {'status': False}
+    return JsonResponse(post_dict, safe=False)
+
     # else:
     #     try:
     #         post = Post.objects.get(title=post_title)
