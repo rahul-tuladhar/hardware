@@ -52,7 +52,7 @@ def post_detail(request, post_title=None):
     return JsonResponse(post_dict, safe = False)
 
 
-def edit_post(request):
+def edit_post(request, post_title=None, post_author= None, post_description= None, post_price = None ):
     # context = {}
     if request.method == 'GET':
         post_dict = {'status': 'should not get request edit_post'}
@@ -72,7 +72,7 @@ def edit_post(request):
             post_dict = model_to_dict(post)
             del post_dict['image']
         except ObjectDoesNotExist:
-            post_dict = {'status': False}
+            post_dict = {'status': 'ObjectDoesNotExist'}
     return JsonResponse(post_dict, safe=False)
 
     # else:
