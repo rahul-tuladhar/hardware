@@ -1,6 +1,6 @@
-from django.test import TestCase, Client
-from djanog.core.urlresolvers import reverse
-from petsitting.models import Posts, Reviews
+# from django.test import TestCase, Client
+# from django.core.urlresolvers import reverse
+# from posts.models import Post, Review
 # Create your tests here.
 
 # class GetReviewPageTestCase(TestCase):

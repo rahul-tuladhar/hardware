@@ -8,17 +8,6 @@ from django.forms.models import model_to_dict
 import json
 
 # Create your views here.
-# def index(request):
-#     # response = JsonResponse(some_dictionary)
-#     context = {}
-#     all_posts = Post.objects.all()
-    
-#     context['posts'] = all_posts
-#     return JsonResponse(context)
-# =======
-
-
-# Create your views here.
 def index(request):
     # context = {}
     # all_posts = Post.objects.all()
