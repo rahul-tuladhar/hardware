@@ -7,12 +7,11 @@ from django.core.exceptions import ObjectDoesNotExist
 from django.forms.models import model_to_dict
 import json
 
+
 # Create your views here.
 def index(request):
-    # context = {}
-    # all_posts = Post.objects.all()
-    # context['posts'] = all_posts
-    # return render(request, 'index.html', context
+    """  Returns a JsonResponse dictionary with all of the Post objects' attributes. """
+
     if request.method == 'GET':
         try:
             all_posts_dict = {}
@@ -31,6 +30,13 @@ def index(request):
 
 
 def post_detail(request, post_title=None):
+    """
+    Returns JsonResponse dictionary with given attributes.
+    :param request:
+    :param post_title:
+    :return:
+    """
+
     if request.method == 'GET':
         try:
             post = Post.objects.get(title=post_title)
@@ -40,14 +46,23 @@ def post_detail(request, post_title=None):
             post_dict = {'error': 'object does not exist'}
     if request.method == 'POST':
         post_dict = {'status': 'nothing to POST, only viewing a post detail'}
-    return JsonResponse(post_dict, safe = False)
+    return JsonResponse(post_dict, safe=False)
 
 
-def edit_post(request, post_title=None, post_author= None, post_description= None, post_price = None ):
-    # context = {}
+def edit_post(request, post_title=None, post_author=None,
+              post_description=None, post_price=None):
+    """
+    Returns a JsonResponse dictionary of a post during a POST Request.
+    :param request:
+    :param post_title:
+    :param post_author:
+    :param post_description:
+    :param post_price:
+    :return:
+    """
     if request.method == 'GET':
         post_dict = {'status': 'should not get request edit_post'}
-
+    # TODO: Fully implement the entity API layer of this method
     if request.method == 'POST':
         try:
             post = Post.objects.get(title=post_title)
@@ -65,13 +80,3 @@ def edit_post(request, post_title=None, post_author= None, post_description= Non
         except ObjectDoesNotExist:
             post_dict = {'status': 'ObjectDoesNotExist'}
     return JsonResponse(post_dict, safe=False)
-
-    # else:
-    #     try:
-    #         post = Post.objects.get(title=post_title)
-    #         context['post'] = post
-    #         form = PostEditForm(request.POST, instance=post)
-    #         context['form'] = form
-    #     except ObjectDoesNotExist:
-    #         return render(request, 'error.html')
-    #     return render(request, 'edit_post.html', context)

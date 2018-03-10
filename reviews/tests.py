@@ -3,6 +3,8 @@
 # from posts.models import Post, Review
 # Create your tests here.
 
+# Tests should now be in the /tests directory
+
 # class GetReviewPageTestCase(TestCase):
 # 	# setUp() is called before each test in this class
 # 	def setUp(self):

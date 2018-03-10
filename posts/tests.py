@@ -3,6 +3,7 @@ from django.core.urlresolvers import reverse
 from posts.models import Post
 from login.models import Profile, Group
 
+# Tests should be set up in the /tests directory
 # Create your tests here.
 # class GetPostDetailPageTestCase(TestCase):
 # 	#setUp() is called before each test
