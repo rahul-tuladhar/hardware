@@ -5,10 +5,12 @@ import json
 
 # Create your views here.
 def index(request):
-    context = {}
-    all_posts = Post.objects.all()
-    context['posts'] = all_posts
-    return render(request, 'index.html', context)
+    req = urllib.request.Request('http://placeholder.com/call-to-exp-layer')
+
+    resp_json = urllib.request.urlopen(req).read().decode('utf-8')
+    context = json.loads(resp_json)
+    return render(response, 'template.html', context)
+
 
 def post_detail(request, post_title=None):
     context = {}
