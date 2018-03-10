@@ -1,0 +1,31 @@
+models:
+  image: tp33/django
+  external_links:
+    -  mysql:db
+  volumes:
+    - ./:/app
+  ports:
+    - "8001:8000"
+  command: "mod_wsgi-express start-server --working-directory /app    --reload-on-changes /app/petsitting/wsgi.py
+          && python3 manage.py makemigrations && python3 manage.py migrate
+          && python3 manage.py loaddata db.json"
+
+exp:
+  image: tp33/django
+  links:
+    - models:models-api
+  ports:
+    - "8002:8000"
+  volumes:
+    - ./:/app
+  command: "mod_wsgi-express start-server --reload-on-changes  /app/petsitting/wsgi.py"
+
+web:
+  image: tp33/django
+  links:
+    - exp:exp-api
+  ports:
+    - "8000:8000"
+  volumes:
+    - ./:/app
+  command: "mod_wsgi-express start-server --reload-on-changes /app/petsitting/wsgi.py"
