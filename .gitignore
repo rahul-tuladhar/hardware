@@ -88,8 +88,8 @@ local_settings.py
 .env
 db.sqlite3
 
-/computerparts/login/migrations/
-/computerparts/posts/migrations/
-/computerparts/reviews/migrations/
+# migrations
+**/**/migrations
+
 __pycache__
 .idea/
