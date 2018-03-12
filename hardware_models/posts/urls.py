@@ -1,5 +1,5 @@
 from django.conf.urls import url
-from hardware_web.posts.views import post_detail, index, edit_post
+from .views import post_detail, index, edit_post
 
 urlpatterns = [
     url(r'^$', index, name='index'),

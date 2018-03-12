@@ -2,7 +2,6 @@ from django.test import TestCase, Client
 from django.core.urlresolvers import reverse
 from posts.models import Post
 from login.models import Profile, Group
-from reviews.models import Review
 
 
 class LoginModelTest(TestCase):

@@ -1,4 +1,4 @@
-from hardware_web.login.views import user_profile
+from .views import user_profile
 from django.conf.urls import url
 
 urlpatterns = [
