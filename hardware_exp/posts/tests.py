@@ -1,7 +1,7 @@
-from django.test import TestCase, Client
-from django.core.urlresolvers import reverse
-from posts.models import Post
-from login.models import Profile, Group
+# from django.test import TestCase, Client
+# from django.core.urlresolvers import reverse
+# from posts.models import Post
+# from login.models import Profile, Group
 
 # Tests should be set up in the /tests directory
 # Create your tests here.
