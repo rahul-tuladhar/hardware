@@ -17,7 +17,7 @@ from django.contrib import admin
 from django.conf.urls import url, include
 
 urlpatterns = [
-    url(r'^api/v1/admin', admin.site.urls),
-    url(r'^api/v1/users', include('login.urls')),
-    url(r'^api/v1/posts', include('posts.urls')),
+    url(r'^api/v3/admin', admin.site.urls),
+    url(r'^api/v3/users', include('login.urls')),
+    url(r'^api/v3/posts', include('posts.urls')),
 ]

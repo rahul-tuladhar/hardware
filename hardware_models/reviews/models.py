@@ -11,7 +11,7 @@ class Review(models.Model):
     description = models.TextField(max_length=2048)
     post = models.OneToOneField(Post, on_delete=models.CASCADE)
     rating = models.FloatField(default=5.0)
-    reviewer = models.ForeignKey(Profile, on_delete=models.CASCADE)
+    # reviewer = models.ForeignKey(Profile, on_delete=models.CASCADE)
     title = models.CharField(max_length=50)
     upvotes = models.IntegerField(default=0)
 
