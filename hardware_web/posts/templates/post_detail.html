@@ -3,10 +3,14 @@
 <!-- Context dictionary contains only 1 key
 	Attributes are accessed like so below -->
 {% block content %}
-<h1>Title: {{title}}</h1>
-<p>Date: {{date}}</p>
-<p>Description: {{description}}</p>
-<p>Price: {{price}}</p>
-<p>Location: {{location}}</p>
-<p>Submitted by: {{author}}</p>
+	{% if title %}
+		<h1>Title: {{title}}</h1>
+		<p>Date: {{date}}</p>
+		<p>Description: {{description}}</p>
+		<p>Price: {{price}}</p>
+		<p>Location: {{location}}</p>
+		<p>Submitted by: {{author}}</p>
+	{% else %}
+		No post found
+	{% endif %}
 {% endblock %}

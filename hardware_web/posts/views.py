@@ -21,11 +21,15 @@ def homepage(request):
     #render the data with the html
     return render(request, 'index.html', context)
 
-
+#sends a GET reqeust to the URL then returns a JsonResponse for post_detail
 def post_detail(request, id):
-    """ Sends a GET reqeust to the URL then returns a JsonResponse for post_detail """
 
+    #get the json response 
     req = urllib.request.Request('http://exp-api:8000/api/v3/posts/' + str(id))
     json_response = urllib.request.urlopen(req).read().decode('utf-8')
+
+    #set the context to be the single post
     context = json.loads(json_response)
+
+    #return
     return render(request, 'post_detail.html', context)
