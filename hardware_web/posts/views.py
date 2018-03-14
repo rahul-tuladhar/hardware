@@ -11,7 +11,12 @@ def homepage(request):
 
     req = urllib.request.Request('http://exp-api:8000/api/v3/posts/home')
     json_response = urllib.request.urlopen(req).read().decode('utf-8')
-    context = json.loads(json_response)
+    response = json.loads(json_response)
+
+    context = {
+        'data': response['posts']['result']
+    }
+
     return render(request, 'index.html', context)
 
 
