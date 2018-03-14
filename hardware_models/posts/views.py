@@ -8,24 +8,44 @@ from django.forms.models import model_to_dict
 import json
 
 
-# Create your views here.
+#returns a JsonResponse dictionary with all of the Post objects' attributes
 def index(request):
-    """  Returns a JsonResponse dictionary with all of the Post objects' attributes. """
 
+    #if attempting to get data from DB
     if request.method == 'GET':
+
+        #result dictionary
+        all_posts_dict = {}
+
         try:
-            all_posts_dict = {}
+            #getting all of the posts
             all_posts = Post.objects.all().values()
+
+            #append each post to a dictionary
             for post in all_posts:
                 all_posts_dict[post['id']] = post
+
+            #response object showing that it worked
+            response = {'status': True, 'result': all_posts_dict}
+            
+            #return json object with success message
+            return JsonResponse(response, safe=False)
+
         except ObjectDoesNotExist:
-            all_posts_dict = {'status': 'ObjectDoesNotExist'}
+
+            #response object showing that it failed
+            response = {'status': False, 'result': all_posts_dict}
+
+            #return json object with failure message
+            return JsonResponse(response, safe=False)
+
+
+    #if attempting to save data to DB
     if request.method == 'POST':
-        try:
-            all_posts = Post.objects.all().values()
-            all_posts_dict = {'status': 'Nothing to POST'}
-        except ObjectDoesNotExist:
-            all_posts_dict = {'status': 'ObjectDoesNotExist'}
+        all_posts = Post.objects.all().values()
+        all_posts_dict = {'status': 'Nothing to POST'}
+
+
     return JsonResponse(all_posts_dict, safe=False)
 
 
