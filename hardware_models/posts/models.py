@@ -22,3 +22,5 @@ class Post(models.Model):
         :return: Returns the title string.
         """
         return self.title
+
+
