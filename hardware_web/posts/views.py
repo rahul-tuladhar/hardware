@@ -5,18 +5,20 @@ import json
 from django.http import HttpResponse
 
 
-# Create your views here.
+#sends GET request to the URL then returns a JsonResponse dictionary for homepage
 def homepage(request):
-    """ Sends GET request to the URL then returns a JsonResponse dictionary for homepage """
 
+    #get the json response
     req = urllib.request.Request('http://exp-api:8000/api/v3/posts/home')
     json_response = urllib.request.urlopen(req).read().decode('utf-8')
     response = json.loads(json_response)
 
+    #set the context to be just the post data from the response object
     context = {
         'data': response['posts']['result']
     }
 
+    #render the data with the html
     return render(request, 'index.html', context)
 
 
