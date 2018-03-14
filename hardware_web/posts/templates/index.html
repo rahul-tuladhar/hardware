@@ -1,0 +1,16 @@
+
+{% extends 'base.html' %}
+{% load static %}
+{% block content %}
+<h1>Index Page</h1>
+<ul>
+	<!-- 'posts' is a key in the context dictionary -->
+	<!-- TODO: Can't get the attributes of each post to load -->
+  {% for post in posts %} 
+    <li>
+    	{{post.price}}
+      <a href="{% url 'post_detail' post %}">{{post}}</a>
+    </li>
+  {% endfor %}
+</ul>
+{% endblock %}
