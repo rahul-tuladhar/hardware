@@ -1,18 +1,18 @@
 from django.shortcuts import render
-from django.http import JsonResponse
 import urllib.request
 import urllib.parse
 import json
+from django.http import HttpResponse
 
 
 # Create your views here.
 def homepage(request):
     """ Sends GET request to the URL then returns a JsonResponse dictionary for homepage """
 
-    req = urllib.request.Request('http://exp-api:8000/api/v3/posts/home')
-    json_response = urllib.request.urlopen(req).read().decode('utf-8')
-    context = json.loads(json_response)
-    return render(request, 'home.html', context)
+    # req = urllib.request.Request('http://exp-api:8000/api/v3/posts/home')
+    # json_response = urllib.request.urlopen(req).read().decode('utf-8')
+    # context = json.loads(json_response)
+    return render(request, 'home.html')
 
 
 def post_detail(request, post_id):

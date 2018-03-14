@@ -5,8 +5,8 @@ models:
    ports:
       - "8001:8000"
    volumes:
-      - ./:/app
-   command: "mod_wsgi-express start-server --reload-on-changes app/hardware_models/wsgi.py"
+      - ./hardware_models:/app
+   command: "mod_wsgi-express start-server --reload-on-changes hardware_models/wsgi.py"
 
 exp:
    image: tp33/django
@@ -15,8 +15,8 @@ exp:
    ports:
       - "8002:8000"
    volumes:
-      - ./:/app
-   command: "mod_wsgi-express start-server --reload-on-changes app/hardware_exp/wsgi.py"
+      - ./hardware_exp:/app
+   command: "mod_wsgi-express start-server --reload-on-changes hardware_exp/wsgi.py"
 
 web:
    image: tp33/django
@@ -25,5 +25,5 @@ web:
    ports:
       - "8000:8000"
    volumes:
-      - ./:/app
-   command: "mod_wsgi-express start-server --reload-on-changes app/hardware_web/wsgi.py"
+      - ./hardware_web:/app
+   command: "mod_wsgi-express start-server --reload-on-changes hardware_web/wsgi.py"

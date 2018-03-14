@@ -1,4 +1,4 @@
-from django.test import TestCase
+from django.test import TestCase, Client
 from django.core.urlresolvers import reverse
 
 
@@ -16,7 +16,7 @@ class PostViewTest(TestCase):
         """ Tests whether the correct homepage template is used """
         r = self.client.get(reverse('home'))
         self.assertEquals(r.status_code, 200)
-        self.assertTemplateUsed(r, 'hardware_models/homepage.html')
+        self.assertTemplateUsed(r, 'hardware_models/home.html')
 
     # def test_homepage_is_paginated(self):x
     #     """ Tests whether the homepage is paginated (as it should be) """
