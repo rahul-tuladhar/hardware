@@ -48,23 +48,23 @@ def index(request):
 
     return JsonResponse(all_posts_dict, safe=False)
 
-
+#returns the details of a specific post
 def post_detail(request, id):
-    """
-    :param request: HTTP request
-    :param post_id: ID of the specific post
-    :return: JsonResponse dictionary with given attributes.
-    """
 
+    #if attemping to get data from DB
     if request.method == 'GET':
         try:
             post = Post.objects.get(id=id)
             post_dict = model_to_dict(post)
             del post_dict['image'] 
+            
         except ObjectDoesNotExist:
             post_dict = {'error': 'object does not exist'}
+
+    #if trying to post information to the DB
     if request.method == 'POST':
         post_dict = {'status': 'nothing to POST, only viewing a post detail'}
+
     return JsonResponse(post_dict, safe=False)
 
 

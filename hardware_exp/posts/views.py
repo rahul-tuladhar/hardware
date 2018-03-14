@@ -5,10 +5,8 @@ import urllib.parse
 import json
 
 
-# Create your views here.
+#sends GET request to the URL(s) then returns a JsonResponse dictionary for homepage
 def homepage(request):
-    """ Sends GET request to the URL(s) then returns a JsonResponse dictionary for homepage """
-    # TODO: error checking and exception handling
 
     context = {}
     req = urllib.request.Request('http://models-api:8000/api/v3/posts/home')
@@ -17,10 +15,9 @@ def homepage(request):
     context["posts"] = all_posts_dic    # adds posts dict to separate requested information
     return JsonResponse(context)
 
-
+#sends a GET reqeust to the URL(s) then returns a JsonResponse for post_detail
 def post_detail(request, id):
-    """ Sends a GET reqeust to the URL(s) then returns a JsonResponse for post_detail """
-    # TODO: error checking and exception handling
+    
     req = urllib.request.Request('http://models-api:8000/api/v3/posts/' + str(id))
     json_response = urllib.request.urlopen(req).read().decode('utf-8')
     context = json.loads(json_response)
