@@ -9,10 +9,10 @@ from django.http import HttpResponse
 def homepage(request):
     """ Sends GET request to the URL then returns a JsonResponse dictionary for homepage """
 
-    # req = urllib.request.Request('http://exp-api:8000/api/v3/posts/home')
-    # json_response = urllib.request.urlopen(req).read().decode('utf-8')
-    # context = json.loads(json_response)
-    return render(request, 'home.html')
+    req = urllib.request.Request('http://exp-api:8000/api/v3/posts/home')
+    json_response = urllib.request.urlopen(req).read().decode('utf-8')
+    context = json.loads(json_response)
+    return render(request, 'home.html', context)
 
 
 def post_detail(request, post_id):
