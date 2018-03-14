@@ -17,7 +17,7 @@ def index(request):
             all_posts_dict = {}
             all_posts = Post.objects.all().values()
             for post in all_posts:
-                all_posts_dict[post['title']] = post
+                all_posts_dict[post['id']] = post
         except ObjectDoesNotExist:
             all_posts_dict = {'status': 'ObjectDoesNotExist'}
     if request.method == 'POST':
@@ -29,19 +29,18 @@ def index(request):
     return JsonResponse(all_posts_dict, safe=False)
 
 
-def post_detail(request, post_title=None):
+def post_detail(request, id):
     """
-    Returns JsonResponse dictionary with given attributes.
-    :param request:
-    :param post_title:
-    :return:
+    :param request: HTTP request
+    :param post_id: ID of the specific post
+    :return: JsonResponse dictionary with given attributes.
     """
 
     if request.method == 'GET':
         try:
-            post = Post.objects.get(title=post_title)
+            post = Post.objects.get(id=id)
             post_dict = model_to_dict(post)
-            del post_dict['image']
+            del post_dict['image'] 
         except ObjectDoesNotExist:
             post_dict = {'error': 'object does not exist'}
     if request.method == 'POST':
@@ -49,8 +48,7 @@ def post_detail(request, post_title=None):
     return JsonResponse(post_dict, safe=False)
 
 
-def edit_post(request, post_title=None, post_author=None,
-              post_description=None, post_price=None):
+def edit_post(request, id):
     """
     Returns a JsonResponse dictionary of a post during a POST Request.
     :param request:
@@ -65,7 +63,7 @@ def edit_post(request, post_title=None, post_author=None,
     # TODO: Fully implement the entity API layer of this method
     if request.method == 'POST':
         try:
-            post = Post.objects.get(title=post_title)
+            post = Post.objects.get(id=id)
             # if (request.POST is not None):
             #     post.title = post_title
             # if (post_description is not None):

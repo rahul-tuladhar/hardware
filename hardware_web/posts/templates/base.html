@@ -6,8 +6,12 @@
   <meta http-equiv="X-UA-Compatible" content="ie=edge">
   <title>Base site</title>
 </head>
+<link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css">
+<link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap-theme.min.css">
 <body>
   {% block navbar %}
+  Navbar
+  <h3><a href="{% url 'home' %}">Home</a></h3>
   {% endblock %}
   {% block content %}
   {% endblock %}
