@@ -9,7 +9,6 @@ class Post(models.Model):
     author = models.ForeignKey(Profile, on_delete=models.CASCADE)
     date = models.DateTimeField(default=timezone.now)
     description = models.TextField(max_length=2048)
-    image = models.ImageField(blank=True, null=True)
     location = models.CharField(default='JPA', max_length=24)
     part = models.CharField(default='Computer', max_length=50)
     payment_method = models.CharField(default='Cash', max_length=50)  # e.g. paypal, cash, venmo, etc
@@ -22,5 +21,3 @@ class Post(models.Model):
         :return: Returns the title string.
         """
         return self.title
-
-

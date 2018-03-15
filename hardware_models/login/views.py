@@ -1,5 +1,5 @@
 from django.shortcuts import render
-from .models import Group, Profile
+from login.models import Group, Profile
 from django.core.exceptions import ObjectDoesNotExist
 import json
 from django.http import JsonResponse
@@ -36,21 +36,18 @@ def user_profile(request, username=None):
 
 def index(request):
     if request.method == 'GET':
-
         #result dictionary
         all_profiles_dict = {}
-
         try:
             #getting all of the posts
             all_profiles = Profile.objects.all().values()
-
             #append each post to a dictionary
-            for profile in all_profiles:
-                all_profiles_dict[profile['id']] = profile
-
+            ### all_profiles seems to error out and cause a 500 error
+            # for profile in all_profiles:
+            #     all_profiles_dict[profile['id']] = profile
             #response object showing that it worked
-            response = {'status': True, 'result': all_profiles_dict}
 
+            response = {'status': True, 'result': {'test': False}}
             #return json object with success message
             return JsonResponse(response, safe=False)
 
@@ -62,10 +59,9 @@ def index(request):
             #return json object with failure message
             return JsonResponse(response, safe=False)
 
-
     #if attempting to save data to DB
     if request.method == 'POST':
-        all_profiles = Profile.objects.all().values()
+        # all_profiles = Profile.objects.all().values()
         all_profiles_dict = {'status': 'Nothing to POST'}
 
 
