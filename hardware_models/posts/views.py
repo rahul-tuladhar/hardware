@@ -48,8 +48,7 @@ def post_detail(request, id):
     if request.method == 'GET':
         try:
             post = Post.objects.get(id=id)
-            post_dict = model_to_dict(post)
-            del post_dict['image']
+            post_dict = model_to_dict(post) 
 
         except ObjectDoesNotExist:
             post_dict = {'error': 'object does not exist'}
