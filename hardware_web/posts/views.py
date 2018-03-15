@@ -13,10 +13,13 @@ def homepage(request):
     json_response = urllib.request.urlopen(req).read().decode('utf-8')
     response = json.loads(json_response)
 
+    user_req = urllib.request.Request('http://exp-api:8000/api/v3/posts/home')
+    user_json_response = urllib.request.urlopen(user_req).read().decode('utf-8')
+    user_response = json.loads(user_json_response)
     #set the context to be just the post data from the response object
     context = {
         'data': response['posts']['result'],
-        'profiles': response['profiles']['result']
+        'profiles': user_response['profiles']['result']
     }
 
     #render the data with the html

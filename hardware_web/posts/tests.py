@@ -12,11 +12,11 @@ class PostViewTest(TestCase):
         :return: None
         """
 
-    def test_homepage_template(self):
+    def test_homepage_correct_template_used(self):
         """ Tests whether the correct homepage template is used """
         r = self.client.get(reverse('home'))
         self.assertEquals(r.status_code, 200)
-        self.assertTemplateUsed(r, 'hardware_models/home.html')
+        self.assertTemplateUsed(r, 'index.html')
 
     # def test_homepage_is_paginated(self):x
     #     """ Tests whether the homepage is paginated (as it should be) """
@@ -25,9 +25,10 @@ class PostViewTest(TestCase):
     #     self.assertTrue(r.context['is_paginated'] is True)
     #     self.assertTrue(len(r.context['post_list']) == 3)  # assumes we are going to have 3 posts as an example
 
-    def test_list_all_posts(self):
-        """ Tests whether all posts is listed correctly """
+    def test_len_home_all_posts(self):
+        """ Tests whether all posts are listed correctly """
         r = self.client.get(reverse('home'))
+
         self.assertEquals(r.status_code, 200)
 
     # def test_list_all_posts(self):

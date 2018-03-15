@@ -1,67 +1,60 @@
-from django.shortcuts import render
 from .models import Post
-from .forms import PostEditForm
-import json
 from django.http import JsonResponse
 from django.core.exceptions import ObjectDoesNotExist
 from django.forms.models import model_to_dict
-import json
 
 
-#returns a JsonResponse dictionary with all of the Post objects' attributes
+# returns a JsonResponse dictionary with all of the Post objects' attributes
 def index(request):
-
-    #if attempting to get data from DB
+    # if attempting to get data from DB
     if request.method == 'GET':
 
-        #result dictionary
+        # result dictionary
         all_posts_dict = {}
 
         try:
-            #getting all of the posts
+            # getting all of the posts
             all_posts = Post.objects.all().values()
 
-            #append each post to a dictionary
+            # append each post to a dictionary
             for post in all_posts:
                 all_posts_dict[post['id']] = post
 
-            #response object showing that it worked
+            # response object showing that it worked
             response = {'status': True, 'result': all_posts_dict}
-            
-            #return json object with success message
+
+            # return json object with success message
             return JsonResponse(response, safe=False)
 
         except ObjectDoesNotExist:
 
-            #response object showing that it failed
+            # response object showing that it failed
             response = {'status': False, 'result': all_posts_dict}
 
-            #return json object with failure message
+            # return json object with failure message
             return JsonResponse(response, safe=False)
 
-
-    #if attempting to save data to DB
+    # if attempting to save data to DB
     if request.method == 'POST':
         all_posts = Post.objects.all().values()
         all_posts_dict = {'status': 'Nothing to POST'}
 
-
     return JsonResponse(all_posts_dict, safe=False)
 
-#returns the details of a specific post
-def post_detail(request, id):
 
-    #if attemping to get data from DB
+# returns the details of a specific post
+def post_detail(request, id):
+    # if attemping to get data from DB
     if request.method == 'GET':
         try:
             post = Post.objects.get(id=id)
             post_dict = model_to_dict(post)
-            del post_dict['image'] 
-            
+            del post_dict['image']
+
         except ObjectDoesNotExist:
             post_dict = {'error': 'object does not exist'}
 
-    #if trying to post information to the DB
+    # if trying to post information to the DB
     if request.method == 'POST':
         post_dict = {'status': 'nothing to POST, only viewing a post detail'}
 

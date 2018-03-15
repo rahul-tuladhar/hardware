@@ -10,16 +10,16 @@ def homepage(request):
 
     #get json response
     context = {}
-    # req = urllib.request.Request('http://models-api:8000/api/v3/posts/home')
-    # json_response = urllib.request.urlopen(req).read().decode('utf-8')
-    # all_posts_dic = json.loads(json_response)
+    req = urllib.request.Request('http://models-api:8000/api/v3/posts/home')
+    json_response = urllib.request.urlopen(req).read().decode('utf-8')
+    all_posts_dic = json.loads(json_response)
 
     users_req = urllib.request.Request('http://models-api:8000/api/v3/users/profile')
     users_response = urllib.request.urlopen(users_req).read().decode('utf-8')
     all_profiles_dict = json.loads(users_response)
 
     context["profiles"] = all_profiles_dict
-    # context["posts"] = all_posts_dic
+    context["posts"] = all_posts_dic
 
     #return
     return JsonResponse(context)
