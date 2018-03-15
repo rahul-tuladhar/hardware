@@ -4,7 +4,8 @@ from django.core.exceptions import ObjectDoesNotExist
 import json
 from django.http import JsonResponse
 from django.core import serializers
-from django.forms.models import model_to_dict
+import urllib.request
+import urllib.parse
 
 
 # Create your views here.
@@ -32,3 +33,40 @@ def user_profile(request, username=None):
 
     del x['affiliations']
     return JsonResponse(x, safe=False)
+
+def index(request):
+    if request.method == 'GET':
+
+        #result dictionary
+        all_profiles_dict = {}
+
+        try:
+            #getting all of the posts
+            all_profiles = Profile.objects.all().values()
+
+            #append each post to a dictionary
+            for profile in all_profiles:
+                all_profiles_dict[profile['id']] = profile
+
+            #response object showing that it worked
+            response = {'status': True, 'result': all_profiles_dict}
+
+            #return json object with success message
+            return JsonResponse(response, safe=False)
+
+        except ObjectDoesNotExist:
+
+            #response object showing that it failed
+            response = {'status': False, 'result': all_profiles_dict}
+
+            #return json object with failure message
+            return JsonResponse(response, safe=False)
+
+
+    #if attempting to save data to DB
+    if request.method == 'POST':
+        all_profiles = Profile.objects.all().values()
+        all_profiles_dict = {'status': 'Nothing to POST'}
+
+
+    return JsonResponse(all_profiles_dict, safe=False)

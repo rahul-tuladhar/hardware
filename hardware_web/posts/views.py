@@ -15,7 +15,8 @@ def homepage(request):
 
     #set the context to be just the post data from the response object
     context = {
-        'data': response['posts']['result']
+        'data': response['posts']['result'],
+        'profiles': response['profiles']['result']
     }
 
     #render the data with the html
@@ -24,7 +25,7 @@ def homepage(request):
 #sends a GET reqeust to the URL then returns a JsonResponse for post_detail
 def post_detail(request, id):
 
-    #get the json response 
+    #get the json response
     req = urllib.request.Request('http://exp-api:8000/api/v3/posts/' + str(id))
     json_response = urllib.request.urlopen(req).read().decode('utf-8')
 

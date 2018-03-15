@@ -9,6 +9,11 @@
 		     	<a href="{% url 'post_detail' post %}">{{post}}</a>
 		    </li>
 	  	{% endfor %}
+      <!-- {% for profile in data %}
+      <li>
+        {{profile.username}}
+      </li>
+      {% endfor %} -->
 	{% else %}
 		<p> No posts found </p>
 	{% endif %}
