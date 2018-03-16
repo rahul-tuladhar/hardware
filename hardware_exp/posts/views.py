@@ -9,10 +9,9 @@ import json
 def home(request):
 
     #get json response
-    context = {}
     req = urllib.request.Request('http://models-api:8000/api/home')
     json_response = urllib.request.urlopen(req).read().decode('utf-8')
-    all_posts_dic = json.loads(json_response)
+    context = json.loads(json_response)
 
     #return
     return JsonResponse(context)
