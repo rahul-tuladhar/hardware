@@ -17,8 +17,8 @@ def index(request):
             all_posts = Post.objects.all().values()
 
             # append each post to a dictionary
-            for post in all_posts:
-                all_posts_dict[post['id']] = post
+            # for post in all_posts:
+                # all_posts_dict[post['id']] = post
 
             # response object showing that it worked
             response = {'status': True, 'result': all_posts_dict}
@@ -48,7 +48,7 @@ def post_detail(request, id):
     if request.method == 'GET':
         try:
             post = Post.objects.get(id=id)
-            post_dict = model_to_dict(post) 
+            post_dict = model_to_dict(post)
 
         except ObjectDoesNotExist:
             post_dict = {'error': 'object does not exist'}
@@ -82,9 +82,9 @@ def edit_post(request, id):
             #     post.description = post_description
             # if (post_author is not None):
             #     post.author = post_author
-            # if (post_price is not None):  
+            # if (post_price is not None):
             #     post.price = float(post_price)
-            # post.save() 
+            # post.save()
             post_dict = model_to_dict(post)
             del post_dict['image']
         except ObjectDoesNotExist:
