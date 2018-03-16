@@ -23,7 +23,7 @@ class Profile(models.Model):
     def __str__(self):
         return self.username
 
-# Create your models here.
+
 class Post(models.Model):
     """ Attributes in alphabetical order. """
     author = models.ForeignKey(Profile, on_delete=models.CASCADE)
