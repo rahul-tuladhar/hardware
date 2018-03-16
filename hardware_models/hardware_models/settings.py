@@ -31,9 +31,7 @@ ALLOWED_HOSTS = []
 # Application definition
 
 INSTALLED_APPS = [
-    'login.apps.LoginConfig',
     'posts.apps.PostsConfig',
-    'reviews.apps.ReviewsConfig',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -59,9 +57,7 @@ TEMPLATES = [
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
         'DIRS': [
             BASE_DIR,
-            os.path.join(BASE_DIR, 'login/templates'),
             os.path.join(BASE_DIR, 'posts/templates'),
-            os.path.join(BASE_DIR, 'reviews/templates'),
         ],
         'APP_DIRS': True,
         'OPTIONS': {
