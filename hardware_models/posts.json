@@ -1,1 +1,0 @@
-[{"model": "posts.post", "pk": 3, "fields": {"author": 3, "date": "2018-03-16T03:17:04Z", "description": "this is a post", "location": "JPA", "part": "Computer", "payment_method": "Cash", "price": 1.0, "transaction_type": "Selling", "title": "first"}}]

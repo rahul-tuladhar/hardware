@@ -6,7 +6,7 @@ models:
       - "8001:8000"
    volumes:
       - ./hardware_models:/app
-   command: bash -c "python manage.py makemigrations posts && python manage.py makemigrations login && python manage.py migrate && python manage.py loaddata groups.json && python manage.py loaddata profiles.json && mod_wsgi-express start-server --reload-on-changes hardware_models/wsgi.py"
+   command: bash -c "python makemigrations posts && python manage.py migrate && mod_wsgi-express start-server --reload-on-changes hardware_models/wsgi.py"
 
 exp:
    image: tp33/django
