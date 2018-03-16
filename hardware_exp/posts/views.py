@@ -9,7 +9,7 @@ import json
 def home(request):
 
     #get json response
-    req = urllib.request.Request('http://models-api:8000/api/home')
+    req = urllib.request.Request('http://models-api:8000/api/home/')
     json_response = urllib.request.urlopen(req).read().decode('utf-8')
     context = json.loads(json_response)
 
