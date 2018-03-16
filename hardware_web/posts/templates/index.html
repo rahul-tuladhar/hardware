@@ -13,20 +13,5 @@
 		<p> No posts found </p>
 	{% endif %}
 </ul>
-    <h3> User Profiles</h3>
-
-    {% if profiles %}   {# Actually list of profiles by profile id int #}
-        {% for profile_id, profile_attributes in profiles.items %}
-{#            <h1>{{profile_id}}</h1>  {# profile_id's value is the profile's id #}
-{#            <h1>{{profile_attributes}}</h1>     {# profile attribute's value is the dictionary with a profile's attributes #}
-            {% for attribute_type, attribute_value in profile_attributes.items %}
-                {% if attribute_type == 'display_name' %}
-                    <a href="{% url 'profile' %}">{{ attribute_type }} : {{ attribute_value }}</a>
-                {% else %}
-                    <h3>{{ attribute_type }} : {{ attribute_value }}</h3>
-                {% endif %}
-            {% endfor %}
-      {% endfor %}
-    {%  endif %}
 
 {% endblock %}
