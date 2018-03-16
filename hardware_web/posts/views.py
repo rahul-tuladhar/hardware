@@ -6,20 +6,15 @@ from django.http import HttpResponse
 
 
 #sends GET request to the URL then returns a JsonResponse dictionary for homepage
-def homepage(request):
+def home(request):
 
     #get the json response
-    req = urllib.request.Request('http://exp-api:8000/api/v3/posts/home')
+    req = urllib.request.Request('http://exp-api:8000/api/home/')
     json_response = urllib.request.urlopen(req).read().decode('utf-8')
     response = json.loads(json_response)
 
-    # user_req = urllib.request.Request('http://exp-api:8000/api/v3/users/home')
-    # user_json_response = urllib.request.urlopen(user_req).read().decode('utf-8')
-    # user_response = json.loads(user_json_response)
-    #set the context to be just the post data from the response object
     context = {
-        'data': response['posts']['result'],
-        # 'profiles': response['profiles']['result']
+        'data': response['result'],
     }
 
     #render the data with the html
@@ -29,7 +24,7 @@ def homepage(request):
 def post_detail(request, id):
 
     #get the json response
-    req = urllib.request.Request('http://exp-api:8000/api/v3/posts/' + str(id))
+    req = urllib.request.Request('http://exp-api:8000/api/post_detail/' + str(id))
     json_response = urllib.request.urlopen(req).read().decode('utf-8')
 
     #set the context to be the single post
