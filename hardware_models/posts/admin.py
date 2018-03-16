@@ -1,8 +1,6 @@
 from django.contrib import admin
 from .models import Post, Group, Profile
 
-# Register your models here.
-admin.site.register(Post)
 
 # Register your models here.
 class GroupAdmin(admin.ModelAdmin):
@@ -12,7 +10,9 @@ class GroupAdmin(admin.ModelAdmin):
 class ProfileAdmin(admin.ModelAdmin):
     list_display = ('username', 'display_name', 'email')
 
-
+# Register your models here.
+admin.site.register(Post)
 admin.site.register(Group, GroupAdmin)
 admin.site.register(Profile, ProfileAdmin)
+
 

@@ -5,11 +5,12 @@ from django.forms.models import model_to_dict
 
 # returns a JsonResponse dictionary with all of the Post objects' attributes
 def home(request):
+
+    # result dictionary
+    all_posts_dict = {}
+
     # if attempting to get data from DB
     if request.method == 'GET':
-
-        # result dictionary
-        all_posts_dict = {}
 
         try:
             # getting all of the posts
