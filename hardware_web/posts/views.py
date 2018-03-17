@@ -70,7 +70,7 @@ def register(request):
 
         #if form is not valid send an error
         else:
-            return render(request, 'register.html')
+            return render(request, 'register.html') 
 
     #if request is GET, render the blank form
     return render(request, 'register.html', {'form' : RegistrationForm()})
