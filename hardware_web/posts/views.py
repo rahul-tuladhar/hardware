@@ -59,10 +59,10 @@ def register(request):
 
             #get the return json
             json_response = urllib.request.urlopen(req).read().decode('utf-8')
-            response = json.loads(json_response)
+            context = json.loads(json_response)
 
             #error checking
-            if not response['status'] or not response:
+            if not context['status'] or not context:
                 return render(request, 'register.html', {'error': 'Unable to create user', 'form': RegistrationForm()})
 
             #redirect to the login page after everything is done
@@ -100,14 +100,14 @@ def login(request):
 
             #get the return json
             json_response = urllib.request.urlopen(req).read().decode('utf-8')
-            response = json.loads(json_response)
+            context = json.loads(json_response)
 
             #error checking
-            if not response['status'] or not response:
+            if not context['status'] or not context:
                 return render(request, 'register.html', {'error': 'Error logging in', 'form': LoginForm()})
 
             #get returned authenticator
-            authenticator = result['result']
+            authenticator = context['result']
 
             #logged in successfully, go to home page and set cookie
             response = HttpResponseRedirect(reverse('home'))
@@ -135,7 +135,7 @@ def logout(request):
 
     # #get the return json
     # json_response = urllib.request.urlopen(req).read().decode('utf-8')
-    # response = json.loads(json_response)
+    # context = json.loads(json_response)
 
     # #delete the cookie
     # response = HttpResponseRedirect(reverse('home'))
