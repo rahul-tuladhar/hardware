@@ -63,7 +63,7 @@ def register(request):
 
             #error checking
             if not context['status'] or not context:
-                return render(request, 'register.html', {'error': 'Unable to create user', 'form': RegistrationForm()})
+                return render(request, 'register.html', {'error': context['status'], 'form': RegistrationForm()})
 
             #redirect to the login page after everything is done
             return HttpResponseRedirect(reverse('login'))
@@ -104,7 +104,7 @@ def login(request):
 
             #error checking
             if not context['status'] or not context:
-                return render(request, 'register.html', {'error': 'Error logging in', 'form': LoginForm()})
+                return render(request, 'register.html', {'error': context['status'], 'form': LoginForm()})
 
             #get returned authenticator
             authenticator = context['result']
