@@ -5,4 +5,7 @@ urlpatterns = [
     url(r'^home/$', home, name='home'),
     url(r'^post_detail/(?P<id>[0-9]+)$', post_detail, name='post_detail'),
     url(r'^edit_post/(?P<id>[0-9]+)$', edit_post, name='edit_post'),
+    url(r'^register/$', register, name='register'),
+    url(r'^login/$', login, name='login'),
+    url(r'^logout/$', logout, name='logout'),
 ]

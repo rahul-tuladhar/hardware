@@ -1,31 +1,10 @@
-from .models import Post, Authenticator
+from .models import Profile, Post, Authenticator
 from django.http import JsonResponse
 from django.core.exceptions import ObjectDoesNotExist
 from django.forms.models import model_to_dict
-
-
-def create_authenticator(user_id):
-    """ Creates new object
-        :param user_id: Integer associated with auth
-        :return: JsonResponse
-        """
-    new_auth = Authenticator.create(user_id)
-    auth_dict = model_to_dict(new_auth)
-    return JsonResponse(auth_dict)
-
-
-def check_authenticator(authenticator, user_id):
-    """
-        Validates authenticator object
-        :param authenticator: Object's 256 digit integer value
-        :param user_id: Int associated with auth
-        :return: Returns True if autenticator associated with user_id is in the db
-    """
-    db_auth = Authenticator.objects.get(authenticator=authenticator, user_id=user_id)
-    if db_auth:
-        return True
-    else:
-        return False
+import urllib.request
+import urllib.parse
+import json
 
 def home(request):
     """
@@ -105,6 +84,99 @@ def edit_post(request, id):
         except ObjectDoesNotExist:
             post_dict = {'status': 'ObjectDoesNotExist'}
     return JsonResponse(post_dict, safe=False)
+
+def register(request):
+    # if method is POST
+    if request.method == "POST":
+        detail = {'email': request.POST['email'], 'password': request.POST['password'],
+                  'username': request.POST['username'], 'display_name': request.POST['display_name']}
+
+        # get the return json
+        context = {'status': ''}
+        u_display_name = request.POST['display_name']
+        u_email = request.POST['email']
+        u_password = request.POST['password']
+        u_username = request.POST['username']
+        profiles = Profile.objects.filter(username=u_username)
+        if len(profiles) is 0:
+            new_profile = Profile(display_name=u_display_name, email=u_email, password=u_password, username=u_username)
+            new_profile.save()
+            context['status'] = 'true'
+            context['error'] = 'User profile successfully created'
+        else:
+            context['status'] = 'false'
+            context['error'] = 'User already exists with that username'
+        # return the JsonResponse
+        return JsonResponse(context)
+
+    # if trying to GET
+    return HttpResponse("Error, cannot complete GET request")
+
+
+def login(request):
+    # if method is POST
+    if request.method == "POST":
+        # get all the details posted from web layer
+        detail = {'password': request.POST['password'], 'username': request.POST['username']}
+
+        # pass encoded data to the model layer api
+        enc_data = urllib.parse.urlencode(detail).encode('utf-8')
+        req = urllib.request.Request('http://models-api:8000/api/login/', enc_data)
+
+        # get the return json
+        json_response = urllib.request.urlopen(req).read().decode('utf-8')
+        context = json.loads(json_response)
+
+        # return the JsonResponse
+        return JsonResponse(context)
+
+    # if trying to GET
+    return HttpReponse("Error, cannot complete GET request")
+
+
+def create_authenticator(user_id):
+    """ Creates new object
+        :param user_id: Integer associated with auth
+        :return: JsonResponse
+        """
+    new_auth = Authenticator.create(user_id)
+    auth_dict = model_to_dict(new_auth)
+    return JsonResponse(auth_dict)
+
+
+def check_authenticator(authenticator, user_id):
+    """
+        Validates authenticator object
+        :param authenticator: Object's 256 digit integer value
+        :param user_id: Int associated with auth
+        :return: Returns True if autenticator associated with user_id is in the db
+    """
+    db_auth = Authenticator.objects.get(authenticator=authenticator, user_id=user_id)
+    if db_auth:
+        return True
+    else:
+        return False
+
+
+def logout(request):
+    # if method is POST
+    if request.method == "POST":
+        # get the authenticator passed in from the web layer
+        detail = {'authenticator': request.POST['authenticator']}
+
+        # pass encoded data to the model layer api
+        enc_data = urllib.parse.urlencode(detail).encode('utf-8')
+        req = urllib.request.Request('http://models-api:8000/api/logout/', enc_data)
+
+        # get the return json
+        json_response = urllib.request.urlopen(req).read().decode('utf-8')
+        context = json.loads(json_response)
+
+        # return the JsonResponse
+        return JsonResponse(context)
+
+    # if trying to GET
+    return HttpReponse("Error, cannot complete GET request")
 
 #     from django.shortcuts import render
 # from login.models import Group, Profile
