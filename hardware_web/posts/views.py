@@ -72,7 +72,6 @@ def register(request):
         else:
             return render(request, 'register.html')
 
-
     #if request is GET, render the blank form
     return render(request, 'register.html', {'form' : RegistrationForm()})
 

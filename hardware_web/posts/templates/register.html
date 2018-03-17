@@ -6,18 +6,27 @@
         <title>Register User</title>
     </head>
    	<body>
-		<!--labels and textboxes to input form -->
-   		<p><label for="username">Username:</label>
-   			<input id="username" type="text" maxlength="100" required /></p>
-		<p><label for="display_name">First and Last Name:</label>
-		    <input id="display_name" type="text" maxlength="100" required /></p>
-		<p><label for="email">Email:</label>
-		    <input id="email" type="text"  maxlength="100" required /></p>
-		<p><label for="password">Password:</label>
-		    <input id="password" type="text" maxlength="100" required /></p>
+   		<form action="/register/" method="post">
 
-		<!--submit button -->
-		<button type="submit" class="btn btn-info btn-lg btn-block" id="id_register">Register</button>
+			<!--labels and textboxes to input form -->
+<!-- 	   		<p><label for="username">Username:</label>
+	   			<input id="username" type="text" maxlength="100" required /></p>
+			<p><label for="display_name">First and Last Name:</label>
+			    <input id="display_name" type="text" maxlength="100" required /></p>
+			<p><label for="email">Email:</label>
+			    <input id="email" type="text"  maxlength="100" required /></p>
+			<p><label for="password">Password:</label>
+			    <input id="password" type="text" maxlength="100" required /></p> -->
+
+			<!-- need csrf_token????? -->
+			{% csrf_token %}
+			
+
+
+			<!--submit button -->
+			<button type="submit" class="btn btn-info btn-lg btn-block" id="id_register">Register</button>
+
+		</form>
 
 		<!--if already have an account, can redirect to login-->
 		<p> Already registered? <a href="/login/">Login</a></p>
