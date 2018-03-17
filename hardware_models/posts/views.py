@@ -1,16 +1,39 @@
-from .models import Post
+from .models import Post, Authenticator
 from django.http import JsonResponse
 from django.core.exceptions import ObjectDoesNotExist
 from django.forms.models import model_to_dict
 
-# returns a JsonResponse dictionary with all of the Post objects' attributes
+
+def create_authenticator(user_id):
+    """ Creates new object
+        :param user_id: Integer associated with auth
+        :return: JsonResponse
+        """
+    new_auth = Authenticator.create(user_id)
+    auth_dict = model_to_dict(new_auth)
+    return JsonResponse(auth_dict)
+
+
+def check_authenticator(authenticator, user_id):
+    """
+        Validates authenticator object
+        :param authenticator: Object's 256 digit integer value
+        :param user_id: Int associated with auth
+        :return: Returns True if autenticator associated with user_id is in the db
+    """
+    db_auth = Authenticator.objects.get(authenticator=authenticator, user_id=user_id)
+    if db_auth:
+        return True
+    else:
+        return False
+
 def home(request):
+    """
+    Returns a JsonResponse dictionary of database values.
+    """
+    all_posts_dict = {}  # result dictionary
 
-    # result dictionary
-    all_posts_dict = {}
-
-    # if attempting to get data from DB
-    if request.method == 'GET':
+    if request.method == 'GET':  # if attempting to get data from DB
 
         try:
             # getting all of the posts
@@ -44,7 +67,12 @@ def home(request):
 
 # returns the details of a specific post
 def post_detail(request, id):
-    # if attemping to get data from DB
+    """
+    Returns a JsonResponse dictionary of a post during a POST Request.
+    :param request: HTTP response
+    :param id: post primary key
+    :return: JsonResponse
+    """
     if request.method == 'GET':
         try:
             post = Post.objects.get(id=id)
@@ -64,11 +92,8 @@ def edit_post(request, id):
     """
     Returns a JsonResponse dictionary of a post during a POST Request.
     :param request:
-    :param post_title:
-    :param post_author:
-    :param post_description:
-    :param post_price:
-    :return:
+    :param id:
+    :return: JsonResponse
     """
     if request.method == 'GET':
         post_dict = {'status': 'should not get request edit_post'}
@@ -76,22 +101,10 @@ def edit_post(request, id):
     if request.method == 'POST':
         try:
             post = Post.objects.get(id=id)
-            # if (request.POST is not None):
-            #     post.title = post_title
-            # if (post_description is not None):
-            #     post.description = post_description
-            # if (post_author is not None):
-            #     post.author = post_author
-            # if (post_price is not None):
-            #     post.price = float(post_price)
-            # post.save()
             post_dict = model_to_dict(post)
-            del post_dict['image']
         except ObjectDoesNotExist:
             post_dict = {'status': 'ObjectDoesNotExist'}
     return JsonResponse(post_dict, safe=False)
-
-
 
 #     from django.shortcuts import render
 # from login.models import Group, Profile
@@ -161,4 +174,3 @@ def edit_post(request, id):
 
 
 #     return JsonResponse(all_profiles_dict, safe=False)
-
