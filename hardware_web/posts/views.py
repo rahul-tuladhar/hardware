@@ -96,7 +96,7 @@ def login(request):
 
             #pass encoded data to the experience layer api
             enc_data = urllib.parse.urlencode(detail).encode('utf-8')
-            req = urllib.request.Request('http://exp-api:8000/api/register/', enc_data)
+            req = urllib.request.Request('http://exp-api:8000/api/login/', enc_data)
 
             #get the return json
             json_response = urllib.request.urlopen(req).read().decode('utf-8')
@@ -111,7 +111,7 @@ def login(request):
 
             #logged in successfully, go to home page and set cookie
             response = HttpResponseRedirect(reverse('home'))
-            response.set_cookie("authenticator", authenticator)
+            response.set_cookie('authenticator', authenticator)
 
             return response
 
@@ -126,8 +126,22 @@ def login(request):
 #logout view
 def logout(request):
 
+    #get the authenticator for the user
+    detail = {'authenticator': request.COOKIES['authenticator']}
 
+    #pass encoded data to the experience layer api
+    enc_data = urllib.parse.urlencode(detail).encode('utf-8')
+    req = urllib.request.Request('http://exp-api:8000/api/logout/', enc_data)
 
+    #get the return json
+    json_response = urllib.request.urlopen(req).read().decode('utf-8')
+    response = json.loads(json_response)
+
+    #delete the cookie
+    response = HttpResponseRedirect(reverse('home'))
+    response.delete_cookie('authenticator') 
+
+    #return the successful logout page
     return render(request, 'logout.html')
 
 
