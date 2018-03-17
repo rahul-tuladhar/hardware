@@ -2,6 +2,7 @@ from .models import Post
 from django.http import JsonResponse
 from django.core.exceptions import ObjectDoesNotExist
 from django.forms.models import model_to_dict
+from django.urls import reverse
 
 # returns a JsonResponse dictionary with all of the Post objects' attributes
 def home(request):
