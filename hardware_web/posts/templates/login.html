@@ -1,1 +1,21 @@
-Hey, login is here!
+<!DOCTYPE html>
+{% load staticfiles %}
+<html>
+    <head>
+        <meta charset="utf-8">
+        <title>Login</title>
+    </head>
+   	<body>
+		<!--labels and textboxes to input form -->
+   		<p><label for="username">Username:</label>
+   			<input id="username" type="text" maxlength="100" required /></p>
+		<p><label for="password">Password:</label>
+		    <input id="password" type="text" maxlength="100" required /></p>
+
+		<!--submit button -->
+		<button type="submit" class="btn btn-info btn-lg btn-block" id="id_register">Login</button>
+
+		<!--if already have an account, can redirect to login-->
+		<p> Need to create an account? <a href="/register/">Register</a></p>
+   	</body>
+</html>

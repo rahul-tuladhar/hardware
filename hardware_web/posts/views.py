@@ -54,7 +54,7 @@ def register(request):
             detail = {'email': email, 'password': password, 'username': username, 'display_name': display_name}
 
             #pass encoded data to the experience layer api
-            enc_data = urllib.parse.urlencode(data).encode('utf-8')
+            enc_data = urllib.parse.urlencode(detail).encode('utf-8')
             req = urllib.request.Request('http://exp-api:8000/api/register/', enc_data)
 
             #get the return json
@@ -76,17 +76,59 @@ def register(request):
     #if request is GET, render the blank form
     return render(request, 'register.html', {'form' : RegistrationForm()})
 
-#login
+#login view
 def login(request):
 
-    #do stuff
-    return render(request, 'login.html')
+    #if request is POST, must process data from form
+    if request.method == 'POST':
 
-#logout
+        #create form instance and populate it with data from the request
+        form = LoginForm(request.POST)
+
+        #check whether the form is valid
+        if form.is_valid():
+
+            #process data
+            password = form.cleaned_data['password']
+            username = form.cleaned_data['username']
+
+            detail = {'password': password, 'username': username}
+
+            #pass encoded data to the experience layer api
+            enc_data = urllib.parse.urlencode(detail).encode('utf-8')
+            req = urllib.request.Request('http://exp-api:8000/api/register/', enc_data)
+
+            #get the return json
+            json_response = urllib.request.urlopen(req).read().decode('utf-8')
+            response = json.loads(json_response)
+
+            #error checking
+            if not response['status'] or not response:
+                return render(request, 'register.html', {'error': 'Error logging in', 'form': LoginForm()})
+
+            #get returned authenticator
+            authenticator = result['result']
+
+            #logged in successfully, go to home page and set cookie
+            response = HttpResponseRedirect(reverse('home'))
+            response.set_cookie("authenticator", authenticator)
+
+            return response
+
+        #if form is not valid send an error
+        else:
+            return render(request, 'login.html', {'error': 'Error logging in', 'form': LoginForm()})
+
+
+    #if request is GET, render the blank form
+    return render(request, 'login.html', {'form': LoginForm()})
+
+#logout view
 def logout(request):
 
+
+
     return render(request, 'logout.html')
-    #do stuff
 
 
 
