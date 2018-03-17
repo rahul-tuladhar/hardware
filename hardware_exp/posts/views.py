@@ -89,3 +89,7 @@ def logout(request):
 
     # if trying to GET
     return HttpReponse("Error, cannot complete GET request")
+
+
+
+    

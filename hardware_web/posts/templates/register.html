@@ -8,6 +8,10 @@
    	<body>
    		<form action="/register/" method="post">
 
+   			{% csrf_token %}
+   			{{form}}
+
+   			<p> testing this <p>
 			<!--labels and textboxes to input form -->
 <!-- 	   		<p><label for="username">Username:</label>
 	   			<input id="username" type="text" maxlength="100" required /></p>
@@ -19,8 +23,7 @@
 			    <input id="password" type="text" maxlength="100" required /></p> -->
 
 			<!-- need csrf_token????? -->
-			{% csrf_token %}
-			
+
 
 
 			<!--submit button -->
