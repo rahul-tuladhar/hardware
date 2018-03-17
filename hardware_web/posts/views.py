@@ -3,6 +3,7 @@ import urllib.request
 import urllib.parse
 import json
 from django.http import HttpResponse
+from .forms import *
 
 
 #sends GET request to the URL then returns a JsonResponse dictionary for homepage
@@ -32,3 +33,39 @@ def post_detail(request, id):
 
     #return
     return render(request, 'post_detail.html', context)
+
+#register a user
+def register(request):
+
+    #if request is POST, must process data from form
+    if request.method == 'POST':
+
+        #create form instance and populate it with data from the request
+        form = RegistrationForm(request.POST)
+
+        #check whether the form is valid
+        if form.is_valid():
+
+            #process data
+            email = form.cleaned_data['email']
+            password = form.cleaned_data['password']
+            username = form.cleaned_data['username']
+            display_name = form.cleaned_data['display_name']
+
+            detail = {'email': email, 'password': password, 'username': username, 'display_name': display_name}
+
+            ######do more stuff here###########
+
+        #if form is not valid send an error
+        else:
+            return render(request, 'register.html')
+
+
+    #if request is GET, render the blank form
+    return render(request, 'register.html', {'form' : RegistrationForm()})
+
+
+
+
+
+
