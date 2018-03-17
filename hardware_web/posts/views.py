@@ -34,7 +34,7 @@ def post_detail(request, id):
 
 
 def add_post(request):
-    if request.method = 'POST':
+    if request.method == 'POST':
         form = AddPostForm(request.POST)
         if form.is_valid():
             values = {}
@@ -47,11 +47,11 @@ def add_post(request):
             values['price'] = form.cleaned_data['price']
             values['transaction_type'] = form.cleaned_data['transaction_type']
             values['title'] = form.cleaned_data['title']
-            data = urllib.parse.urlencode(values)
-            req = urllib.request.Request('http://exp-api:8000/api/add_post/', data)
+            data = urllib.parse.urlencode(values).encode('utf-8')
+            req = urllib.request.Request('http://exp-api:8000/api/add_post', data)
             json_response = urllib.request.urlopen(req)
             response = json.loads(json_response)
-            return render(request, 'index.html')
+            return render(request, 'index.html', response)
         else:
             return render(request, 'add_post.html', {'form': form})
     else:
