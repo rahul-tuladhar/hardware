@@ -36,7 +36,7 @@ def register(request):
         #get all the details posted from web layer
         detail = {'email': request.POST['email'], 'password': request.POST['password'], 'username': request.POST['username'], 'display_name': request.POST['display_name']}
 
-        #pass encoded data to the experience layer api
+        #pass encoded data to the model layer api
         enc_data = urllib.parse.urlencode(detail).encode('utf-8')
         req = urllib.request.Request('http://models-api:8000/api/register/', enc_data)
 
@@ -47,8 +47,53 @@ def register(request):
         #return the JsonResponse 
         return JsonResponse(context)
 
+    #if trying to GET 
+    return HttpReponse("Error, cannot complete GET request")
+
 
 def login(request):
 
+    #if method is POST
+    if request.method == "POST":
+
+        #get all the details posted from web layer
+        detail = {'password': request.POST['password'], 'username': request.POST['username']}
+
+        #pass encoded data to the model layer api
+        enc_data = urllib.parse.urlencode(detail).encode('utf-8')
+        req = urllib.request.Request('http://models-api:8000/api/login/', enc_data)
+
+        #get the return json
+        json_response = urllib.request.urlopen(req).read().decode('utf-8')
+        context = json.loads(json_response)
+
+        #return the JsonResponse 
+        return JsonResponse(context)
+
+
+    #if trying to GET
+    return HttpReponse("Error, cannot complete GET request")
+
 
 def logout(request):
+
+    #if method is POST
+    if request.method == "POST":
+
+        #get the authenticator passed in from the web layer
+        detail = {'authenticator': request.POST['authenticator']}
+
+        #pass encoded data to the model layer api
+        enc_data = urllib.parse.urlencode(detail).encode('utf-8')
+        req = urllib.request.Request('http://models-api:8000/api/logout/', enc_data)
+
+        #get the return json
+        json_response = urllib.request.urlopen(req).read().decode('utf-8')
+        context = json.loads(json_response)
+
+        #return the JsonResponse 
+        return JsonResponse(context)
+
+
+    #if trying to GET
+    return HttpReponse("Error, cannot complete GET request")
