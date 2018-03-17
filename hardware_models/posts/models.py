@@ -2,20 +2,7 @@ from django.db import models
 from django.utils import timezone
 
 
-
-class Group(models.Model):
-    """ Attributes in alphabetical order. """
-    date = models.DateTimeField(default=timezone.now)
-    location = models.CharField(max_length=50)
-    name = models.CharField(max_length=50)
-
-    def __str__(self):
-        return self.name
-
-
 class Profile(models.Model):
-    """ Attributes in alphabetical order. """
-    affiliations = models.ManyToManyField(Group)
     display_name = models.CharField(max_length=24)
     email = models.EmailField(max_length=254)
     password = models.CharField(max_length=50)
@@ -24,9 +11,7 @@ class Profile(models.Model):
     def __str__(self):
         return self.username
         
-# Create your models here.
 class Post(models.Model):
-    """ Attributes in alphabetical order. """
     author = models.ForeignKey(Profile, on_delete=models.CASCADE)
     date = models.DateTimeField(default=timezone.now)
     description = models.TextField(max_length=2048)

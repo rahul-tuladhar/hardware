@@ -80,12 +80,12 @@ def register(request):
 def login(request):
 
     #do stuff
-    return render(request, 'register.html', {'form' : RegistrationForm()})
+    return render(request, 'login.html')
 
 #logout
 def logout(request):
 
-    return render(request, 'register.html', {'form' : RegistrationForm()})
+    return render(request, 'logout.html')
     #do stuff
 
 
