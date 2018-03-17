@@ -36,28 +36,41 @@ def post_detail(request, id):
 #register a user
 def register(request):
 
-    # #if request is POST, must process data from form
-    # if request.method == 'POST':
+    #if request is POST, must process data from form
+    if request.method == 'POST':
 
-    #     #create form instance and populate it with data from the request
-    #     form = RegistrationForm(request.POST)
+        #create form instance and populate it with data from the request
+        form = RegistrationForm(request.POST)
 
-    #     #check whether the form is valid
-    #     if form.is_valid():
+        #check whether the form is valid
+        if form.is_valid():
 
-    #         #process data
-    #         email = form.cleaned_data['email']
-    #         password = form.cleaned_data['password']
-    #         username = form.cleaned_data['username']
-    #         display_name = form.cleaned_data['display_name']
+            #process data
+            email = form.cleaned_data['email']
+            password = form.cleaned_data['password']
+            username = form.cleaned_data['username']
+            display_name = form.cleaned_data['display_name']
 
-    #         detail = {'email': email, 'password': password, 'username': username, 'display_name': display_name}
+            detail = {'email': email, 'password': password, 'username': username, 'display_name': display_name}
 
-    #         ######do more stuff here###########
+            #pass encoded data to the experience layer api
+            enc_data = urllib.parse.urlencode(data).encode('utf-8')
+            req = urllib.request.Request('http://exp-api:8000/api/register/', enc_data)
 
-    #     #if form is not valid send an error
-    #     else:
-    #         return render(request, 'register.html')
+            #get the return json
+            json_response = urllib.request.urlopen(req).read().decode('utf-8')
+            response = json.loads(json_response)
+
+            #error checking
+            if not response['status'] or not response:
+                return render(request, 'register.html', {'error': 'Unable to create user', 'form': RegistrationForm()})
+
+            #redirect to the login page after everything is done
+            return HttpResponseRedirect(reverse('login'))
+
+        #if form is not valid send an error
+        else:
+            return render(request, 'register.html')
 
 
     #if request is GET, render the blank form
