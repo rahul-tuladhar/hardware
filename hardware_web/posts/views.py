@@ -63,10 +63,10 @@ def register(request):
 
             #error checking
             if not context['status'] or not context:
-                return render(request, 'register.html', {'error': context['status'], 'form': RegistrationForm()})
+                return render(request, 'register.html', {'error': "Registration failed", 'form': RegistrationForm()})
 
             #redirect to the login page after everything is done
-            return HttpResponseRedirect(reverse('login'))
+            return HttpResponse(reverse('login'))
 
         #if form is not valid send an error
         else:
@@ -103,7 +103,7 @@ def login(request):
 
             #error checking
             if not context['status'] or not context:
-                return render(request, 'register.html', {'error': context['status'], 'form': LoginForm()})
+                return render(request, 'register.html', {'error': "Login failed", 'form': LoginForm()})
 
             #get returned authenticator
             authenticator = context['result']
