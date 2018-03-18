@@ -19,7 +19,7 @@ class Profile(models.Model):
     display_name = models.CharField(max_length=24)
     email = models.EmailField(max_length=254)
     password = models.CharField(max_length=50)
-    username = models.CharField(max_length=24, default='N/A')
+    username = models.CharField(max_length=24, default='N/A', unique=True)
 
     def __str__(self):
         return self.username

@@ -46,28 +46,30 @@ def register(request):
         # check whether the form is valid
         if form.is_valid():
 
-            # #process data
-            # email = form.cleaned_data['email']
-            # password = form.cleaned_data['password']
-            # username = form.cleaned_data['username']
-            # display_name = form.cleaned_data['display_name']
+            #process data
+            email = form.cleaned_data['email']
+            password = form.cleaned_data['password']
+            username = form.cleaned_data['username']
+            display_name = form.cleaned_data['display_name']
 
-            # detail = {'email': email, 'password': password, 'username': username, 'display_name': display_name}
+            detail = {'email': email, 'password': password, 'username': username, 'display_name': display_name}
 
-            # #pass encoded data to the experience layer api
-            # enc_data = urllib.parse.urlencode(detail).encode('utf-8')
-            # req = urllib.request.Request('http://exp-api:8000/api/register/', enc_data)
+            #pass encoded data to the experience layer api
+            enc_data = urllib.parse.urlencode(detail).encode('utf-8')
+            req = urllib.request.Request('http://exp-api:8000/api/register/', enc_data)
 
-            # #get the return json
-            # json_response = urllib.request.urlopen(req).read().decode('utf-8')
-            # context = json.loads(json_response)
+            #get the return json
+            json_response = urllib.request.urlopen(req).read().decode('utf-8')
+            context = json.loads(json_response)
 
-            # #error checking
-            # if not context['status'] or not context:
-            #     return render(request, 'register.html', {'error': "Registration failed", 'form': RegistrationForm()})
+            #error checking
+            if not context['status'] or not context:
+                return render(request, 'register.html', {'error': 'failed to register user', 'form': RegistrationForm()})
+            if context['status'] == False:
+                return render(request, 'register.html', {'error': context['result'], 'form': RegistrationForm()})
 
             #redirect to the login page after everything is done
-            return HttpResponse(reverse('home'))
+            return HttpResponse(reverse('login'))
 
         # if form is not valid send an error
         else:

@@ -7,10 +7,8 @@ import urllib.request
 import urllib.parse
 import json
 
+#returns the homepage of posts
 def home(request):
-    """
-    Returns a JsonResponse dictionary of database values.
-    """
     all_posts_dict = {}  # result dictionary
 
     if request.method == 'GET':  # if attempting to get data from DB
@@ -47,12 +45,7 @@ def home(request):
 
 # returns the details of a specific post
 def post_detail(request, id):
-    """
-    Returns a JsonResponse dictionary of a post during a POST Request.
-    :param request: HTTP response
-    :param id: post primary key
-    :return: JsonResponse
-    """
+
     if request.method == 'GET':
         try:
             post = Post.objects.get(id=id)
@@ -69,12 +62,7 @@ def post_detail(request, id):
 
 
 def edit_post(request, id):
-    """
-    Returns a JsonResponse dictionary of a post during a POST Request.
-    :param request:
-    :param id:
-    :return: JsonResponse
-    """
+
     if request.method == 'GET':
         post_dict = {'status': 'should not get request edit_post'}
     # TODO: Fully implement the entity API layer of this method
@@ -86,23 +74,35 @@ def edit_post(request, id):
             post_dict = {'status': 'ObjectDoesNotExist'}
     return JsonResponse(post_dict, safe=False)
 
+# registering a new user
 def register(request):
+
     # if method is POST
     if request.method == "POST":
+
+        # setup context 
         context = {'status': ''}
-        u_display_name = request.POST['display_name']
-        u_email = request.POST['email']
-        u_password = request.POST['password']
-        u_username = request.POST['username']
-        profiles = Profile.objects.filter(username=u_username)
-        if len(profiles) is 0:
-            new_profile = Profile(display_name=u_display_name, email=u_email, password=u_password, username=u_username)
+
+        # get post details
+        display_name = request.POST['display_name']
+        email = request.POST['email']
+        password = request.POST['password']
+        username = request.POST['username']
+
+        # create the user profile
+        new_profile = Profile(display_name=display_name, email=email, password=password, username=username)
+
+        # see if user already exists with that username
+        try:
             new_profile.save()
-            context['status'] = 'true'
-            context['error'] = 'User profile successfully created'
-        else:
-            context['status'] = 'false'
-            context['error'] = 'User already exists with that username'
+            context['status'] = True
+            context['result'] = 'User profile successfully created'
+
+        # if the unique username already exists
+        except IntegrityError:
+            context['status'] = False
+            context['result'] = 'User already exists with that username'
+
         # return the JsonResponse
         return JsonResponse(context)
 
@@ -174,15 +174,6 @@ def logout(request):
     # if trying to GET
     return HttpReponse("Error, cannot complete GET request")
 
-#     from django.shortcuts import render
-# from login.models import Group, Profile
-# from django.core.exceptions import ObjectDoesNotExist
-# import json
-# from django.http import JsonResponse
-# from django.core import serializers
-# import urllib.request
-# import urllib.parse
-
 
 # # Create your views here.
 # def user_profile(request, username=None):
@@ -210,35 +201,4 @@ def logout(request):
 #     del x['affiliations']
 #     return JsonResponse(x, safe=False)
 
-# def index(request):
-#     if request.method == 'GET':
-#         #result dictionary
-#         all_profiles_dict = {}
-#         try:
-#             #getting all of the posts
-#             all_profiles = Profile.objects.all().values()
-#             #append each post to a dictionary
-#             ### all_profiles seems to error out and cause a 500 error
-#             # for profile in all_profiles:
-#             #     all_profiles_dict[profile['id']] = profile
-#             #response object showing that it worked
 
-#             response = {'status': True, 'result': {'test': False}}
-#             #return json object with success message
-#             return JsonResponse(response, safe=False)
-
-#         except ObjectDoesNotExist:
-
-#             #response object showing that it failed
-#             response = {'status': False, 'result': all_profiles_dict}
-
-#             #return json object with failure message
-#             return JsonResponse(response, safe=False)
-
-#     #if attempting to save data to DB
-#     if request.method == 'POST':
-#         # all_profiles = Profile.objects.all().values()
-#         all_profiles_dict = {'status': 'Nothing to POST'}
-
-
-#     return JsonResponse(all_profiles_dict, safe=False)
