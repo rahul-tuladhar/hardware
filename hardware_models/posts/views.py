@@ -2,6 +2,7 @@ from .models import Profile, Post, Authenticator
 from django.http import JsonResponse, HttpResponse
 from django.core.exceptions import ObjectDoesNotExist
 from django.forms.models import model_to_dict
+from django.views.decorators.csrf import csrf_exempt
 from django.urls import reverse
 import urllib.request
 import urllib.parse
@@ -75,6 +76,7 @@ def edit_post(request, id):
     return JsonResponse(post_dict, safe=False)
 
 # registering a new user
+@csrf_exempt
 def register(request):
 
     # if method is POST

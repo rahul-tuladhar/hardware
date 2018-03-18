@@ -3,6 +3,7 @@ from django.http import JsonResponse
 import urllib.request
 from django.urls import reverse
 import urllib.parse
+from django.views.decorators.csrf import csrf_exempt
 import json
 
 
@@ -49,7 +50,6 @@ def register(request):
     # # if trying to GET
     # return HttpResponse("Error, cannot complete GET request")
 
-    print('this is a test')
     context = {'status': True, 'result': 'this is a test'}
     return JsonResponse(context)
 
