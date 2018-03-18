@@ -1,6 +1,6 @@
 from django.db import models
 from django.utils import timezone
-
+from random import randint
 
 
 class Group(models.Model):
@@ -23,7 +23,8 @@ class Profile(models.Model):
 
     def __str__(self):
         return self.username
-        
+
+
 # Create your models here.
 class Post(models.Model):
     """ Attributes in alphabetical order. """
@@ -44,5 +45,20 @@ class Post(models.Model):
         return self.title
 
 
+class Authenticator(models.Model):
+    """ Authenticator holds a large random value associated with a user id """
+    authenticator = models.IntegerField(max_length=256, primary_key=True)  # large random value
+    date_created = models.DateTimeField(default=timezone.now)
+    user_id = models.ForeignKey(Profile, on_delete=models.CASCADE)
 
-
+    @classmethod
+    def create(cls, user_id):
+        """
+        :param user_id: Integer associated with auth
+        :return: new_auth object
+        """
+        range_start = 10 ** (256 - 1)
+        range_end = (10 ** 256) - 1
+        random_value = randint(range_start, range_end)
+        new_auth = cls(user_id=user_id, authenticator=str(random_value))
+        return new_auth
