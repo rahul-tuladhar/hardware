@@ -4,6 +4,7 @@ from django.core.exceptions import ObjectDoesNotExist
 from django.forms.models import model_to_dict
 from django.views.decorators.csrf import csrf_exempt
 from django.urls import reverse
+from django.db import IntegrityError
 import urllib.request
 import urllib.parse
 import json
@@ -82,9 +83,6 @@ def register(request):
     # if method is POST
     if request.method == "POST":
 
-        # setup context 
-        context = {'status': ''}
-
         # get post details
         display_name = request.POST['display_name']
         email = request.POST['email']
@@ -97,13 +95,17 @@ def register(request):
         # see if user already exists with that username
         try:
             new_profile.save()
-            context['status'] = True
-            context['result'] = 'User profile successfully created'
+            context = {
+            'status': True,
+            'result': 'User profile successfully created'
+            }
 
         # if the unique username already exists
         except IntegrityError:
-            context['status'] = False
-            context['result'] = 'User already exists with that username'
+            context = {
+            'status': False,
+            'result': 'User already exists with that username'
+            }
 
         # return the JsonResponse
         return JsonResponse(context)

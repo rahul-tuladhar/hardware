@@ -1,5 +1,5 @@
 from django.shortcuts import render
-from django.http import JsonResponse
+from django.http import JsonResponse, HttpResponse
 import urllib.request
 from django.urls import reverse
 import urllib.parse
@@ -30,28 +30,25 @@ def post_detail(request, id):
 
 @csrf_exempt
 def register(request):
-    # # if method is POST
-    # if request.method == "POST":
-    #     # get all the details posted from web layer
-    #     detail = {'email': request.POST['email'], 'password': request.POST['password'],
-    #               'username': request.POST['username'], 'display_name': request.POST['display_name']}
+    # if method is POST
+    if request.method == "POST":
+        # get all the details posted from web layer
+        detail = {'email': request.POST['email'], 'password': request.POST['password'],
+                  'username': request.POST['username'], 'display_name': request.POST['display_name']}
 
-    #     # pass encoded data to the model layer api
-    #     enc_data = urllib.parse.urlencode(detail).encode('utf-8')
-    #     req = urllib.request.Request('http://models-api:8000/api/register/', enc_data)
+        # pass encoded data to the model layer api
+        enc_data = urllib.parse.urlencode(detail).encode('utf-8')
+        req = urllib.request.Request('http://models-api:8000/api/register/', enc_data)
 
-    #     # get the return json
-    #     json_response = urllib.request.urlopen(req).read().decode('utf-8')
-    #     context = json.loads(json_response)
+        # get the return json
+        json_response = urllib.request.urlopen(req).read().decode('utf-8')
+        context = json.loads(json_response)
 
-    #     # return the JsonResponse
-    #     return JsonResponse(context)
+        # return the JsonResponse
+        return JsonResponse(context)
 
-    # # if trying to GET
-    # return HttpResponse("Error, cannot complete GET request")
-
-    context = {'status': True, 'result': 'this is a test'}
-    return JsonResponse(context)
+    # if trying to GET
+    return HttpResponse("Error, cannot complete GET request")
 
 
 

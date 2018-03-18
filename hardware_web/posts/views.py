@@ -1,7 +1,7 @@
 from django.shortcuts import render
 import urllib.request
 import urllib.parse
-from django.http import HttpResponse
+from django.http import HttpResponse, HttpResponseRedirect
 import json
 from django.urls import reverse
 from django.views.decorators.csrf import csrf_exempt
@@ -64,8 +64,6 @@ def register(request):
             json_response = urllib.request.urlopen(req).read().decode('utf-8')
             context = json.loads(json_response)
 
-            # context={'status': True}
-
             #error checking
             if not context:
                 return render(request, 'register.html', {'error': 'Failed to register user', 'form': RegistrationForm()})
@@ -73,7 +71,7 @@ def register(request):
                 return render(request, 'register.html', {'error': context['result'], 'form': RegistrationForm()})
 
             #redirect to the login page after everything is done
-            return HttpResponse(reverse('login'))
+            return HttpResponseRedirect(reverse('login'))
 
         # if form is not valid send an error
         else:
