@@ -82,6 +82,7 @@ def register(request):
 
 
 # login view
+@csrf_exempt
 def login(request):
     # if request is POST, must process data from form
     if request.method == 'POST':
@@ -107,8 +108,10 @@ def login(request):
             context = json.loads(json_response)
 
             # error checking
-            if not context['status'] or not context:
+            if not context:
                 return render(request, 'register.html', {'error': "Login failed", 'form': LoginForm()})
+            if context['status'] != True:
+                return render(request, 'register.html', {'error': context['result'], 'form': RegistrationForm()})
 
             # get returned authenticator
             authenticator = context['result']

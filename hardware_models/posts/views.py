@@ -113,18 +113,37 @@ def register(request):
     # if trying to GET
     return HttpResponse("Error, cannot complete GET request")
 
-
+@csrf_exempt
 def login(request):
+
     # if method is POST
     if request.method == "POST":
-        context = {'status': ''}
-        u_display_name = request.POST['display_name']
-        u_email = request.POST['email']
-        u_password = request.POST['password']
-        u_username = request.POST['username']
-        profile_qs = Profile.objects.filter(username=u_username)
-        if profile_qs.exist() and (len(profile_qs) is 1):
-            profile_auth = create_authenticator(Profile.objects.get(username=u_username))
+
+        # getting POST data
+        username = request.POST['username']
+        password = request.POST['password']
+
+        # creating profile
+        profile_qs = Profile.objects.filter(username=username)
+
+        # if the user is found
+        if profile_qs.exist():
+
+            # create authenticator for user
+            profile_auth = create_authenticator(Profile.objects.get(username=username).id)
+            context = {
+            'status': True,
+            'result': profile_auth
+            }
+
+            # return the JsonResponse
+            return JsonResponse(context)
+
+        # if user is not found
+        context = {
+            'status': False,
+            'result': 'User does not exist'
+        }
 
         # return the JsonResponse
         return JsonResponse(context)

@@ -51,7 +51,7 @@ def register(request):
     return HttpResponse("Error, cannot complete GET request")
 
 
-
+@csrf_exempt
 def login(request):
     # if method is POST
     if request.method == "POST":
