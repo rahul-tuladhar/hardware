@@ -4,6 +4,7 @@ import urllib.parse
 from django.http import HttpResponse
 import json
 from django.urls import reverse
+from django.views.decorators.csrf import csrf_exempt
 from .forms import *
 
 
@@ -36,6 +37,7 @@ def post_detail(request, id):
 
 
 # register a user
+@csrf_exempt
 def register(request):
     # if request is POST, must process data from form
     if request.method == 'POST':
@@ -62,10 +64,12 @@ def register(request):
             json_response = urllib.request.urlopen(req).read().decode('utf-8')
             context = json.loads(json_response)
 
+            # context={'status': True}
+
             #error checking
-            if not context['status'] or not context:
-                return render(request, 'register.html', {'error': 'failed to register user', 'form': RegistrationForm()})
-            if context['status'] == False:
+            if not context:
+                return render(request, 'register.html', {'error': 'Failed to register user', 'form': RegistrationForm()})
+            if context['status'] != True:
                 return render(request, 'register.html', {'error': context['result'], 'form': RegistrationForm()})
 
             #redirect to the login page after everything is done

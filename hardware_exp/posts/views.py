@@ -27,9 +27,9 @@ def post_detail(request, id):
     # return
     return JsonResponse(context)
 
-
+@csrf_exempt
 def register(request):
-    # if method is POST
+    # # if method is POST
     # if request.method == "POST":
     #     # get all the details posted from web layer
     #     detail = {'email': request.POST['email'], 'password': request.POST['password'],
@@ -46,8 +46,13 @@ def register(request):
     #     # return the JsonResponse
     #     return JsonResponse(context)
 
-    # if trying to GET
-    return HttpReponse("Error, cannot complete GET request")
+    # # if trying to GET
+    # return HttpResponse("Error, cannot complete GET request")
+
+    print('this is a test')
+    context = {'status': True, 'result': 'this is a test'}
+    return JsonResponse(context)
+
 
 
 def login(request):
@@ -68,7 +73,7 @@ def login(request):
         return JsonResponse(context)
 
     # if trying to GET
-    return HttpReponse("Error, cannot complete GET request")
+    return HttpResponse("Error, cannot complete GET request")
 
 
 def logout(request):
@@ -89,7 +94,7 @@ def logout(request):
         return JsonResponse(context)
 
     # if trying to GET
-    return HttpReponse("Error, cannot complete GET request")
+    return HttpResponse("Error, cannot complete GET request")
 
 
 
