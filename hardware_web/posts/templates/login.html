@@ -11,6 +11,8 @@
 
    			{% csrf_token %}
 
+        {{result}}
+
    			<!-- post all errors -->
    			{% for error in form.non_field_errors %}
                    {{error}}

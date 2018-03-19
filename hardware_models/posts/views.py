@@ -6,6 +6,7 @@ from django.views.decorators.csrf import csrf_exempt
 from django.urls import reverse
 from django.db import IntegrityError
 import urllib.request
+from random import randint
 import urllib.parse
 import json
 
@@ -123,27 +124,22 @@ def login(request):
         username = request.POST['username']
         password = request.POST['password']
 
-        # creating profile
-        profile_qs = Profile.objects.filter(username=username)
+        # try to find the user with username
+        try:
+            profile = Profile.objects.get(username=username)
+            auth = create_authenticator(profile.id)
 
-        # if the user is found
-        if profile_qs.exist():
-
-            # create authenticator for user
-            profile_auth = create_authenticator(Profile.objects.get(username=username).id)
             context = {
-            'status': True,
-            'result': profile_auth
+                'status': True,
+                'result': auth
             }
 
-            # return the JsonResponse
-            return JsonResponse(context)
-
-        # if user is not found
-        context = {
-            'status': False,
-            'result': 'User does not exist'
-        }
+        # if user not found
+        except Profile.DoesNotExist:
+            context = {
+                'status': False,
+                'result': 'User does not exist'
+            }  
 
         # return the JsonResponse
         return JsonResponse(context)
@@ -157,7 +153,14 @@ def create_authenticator(user_id):
         :param user_id: Integer associated with auth
         :return: JsonResponse
         """
-    new_auth = Authenticator.create(user_id)
+    range_start = 10 ** (256 - 1)
+    range_end = (10 ** 256) - 1
+    random_value = randint(range_start, range_end)
+
+    # create a new auth
+    new_auth = Authenticator(user_id=user_id, authenticator=random_value)
+
+    # save everything
     new_auth.save()
     auth_dict = model_to_dict(new_auth)
     return JsonResponse(auth_dict)

@@ -120,7 +120,8 @@ def login(request):
             response = HttpResponseRedirect(reverse('home'))
             response.set_cookie('authenticator', authenticator)
 
-            return response
+            # return response
+            return render(request, 'login.html', context)
 
         # if form is not valid send an error
         else:
