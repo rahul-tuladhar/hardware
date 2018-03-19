@@ -3,10 +3,9 @@ from django.http import JsonResponse, HttpResponse
 from django.core.exceptions import ObjectDoesNotExist
 from django.forms.models import model_to_dict
 from django.views.decorators.csrf import csrf_exempt
-from django.urls import reverse
 from django.db import IntegrityError
-import urllib.request
 from random import randint
+import urllib.request
 import urllib.parse
 import json
 
@@ -135,7 +134,7 @@ def login(request):
             }
 
         # if user not found
-        except Profile.DoesNotExist:
+        except ObjectDoesNotExist:
             context = {
                 'status': False,
                 'result': 'User does not exist'
@@ -148,25 +147,29 @@ def login(request):
     return HttpResponse("Error, cannot complete GET request")
 
 
-def create_authenticator(user_id):
+def create_authenticator(u_id):
     """ Creates new object
         :param user_id: Integer associated with auth
         :return: JsonResponse
         """
-    range_start = 10 ** (256 - 1)
-    range_end = (10 ** 256) - 1
+    range_start = 10 ** (255 - 1)
+    range_end = (10 ** 255) - 1
     random_value = randint(range_start, range_end)
 
     # create a new auth
-    new_auth = Authenticator(user_id=user_id, authenticator=random_value)
+    new_auth = Authenticator(user_id=u_id, auth=str(random_value))
 
     # save everything
     new_auth.save()
+
     auth_dict = model_to_dict(new_auth)
-    return JsonResponse(auth_dict)
+    context = {
+        'result': auth_dict
+    }
+    return context
 
 
-def check_authenticator(authenticator, user_id):
+def check_authenticator(authenticator, u_id):
     """
         Validates authenticator object
         :param authenticator: Object's 256 digit integer value
@@ -174,9 +177,12 @@ def check_authenticator(authenticator, user_id):
         :return: Returns True if autenticator associated with user_id is in the db
     """
 
-    if Authenticator.objects.filter(authenticator=authenticator, user_id=user_id).exists():
+    try:
+        profile = Authenticator.objects.get(auth=authenticator, user_id=u_id)
         return True
-    else:
+
+    # if user not found
+    except ObjectDoesNotExist:
         return False
 
 
