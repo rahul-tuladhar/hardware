@@ -192,14 +192,6 @@ def logout(request):
         # get the authenticator passed in from the web layer
         detail = {'authenticator': request.POST['authenticator']}
 
-        # pass encoded data to the model layer api
-        enc_data = urllib.parse.urlencode(detail).encode('utf-8')
-        req = urllib.request.Request('http://models-api:8000/api/logout/', enc_data)
-
-        # get the return json
-        json_response = urllib.request.urlopen(req).read().decode('utf-8')
-        context = json.loads(json_response)
-
         # return the JsonResponse
         return JsonResponse(context)
 
