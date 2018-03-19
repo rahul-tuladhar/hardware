@@ -8,6 +8,9 @@ from random import randint
 import urllib.request
 import urllib.parse
 import json
+from hardware_models import settings
+import os
+import hmac
 
 #returns the homepage of posts
 def home(request):
@@ -152,12 +155,14 @@ def create_authenticator(u_id):
         :param user_id: Integer associated with auth
         :return: JsonResponse
         """
-    range_start = 10 ** (255 - 1)
-    range_end = (10 ** 255) - 1
-    random_value = randint(range_start, range_end)
+    random_value = hmac.new(
+        key = settings.SECRET_KEY.encode('utf-8'),
+        msg = os.urandom(32),
+        digestmod = 'sha256',
+    ).hexdigest()
 
     # create a new auth
-    new_auth = Authenticator(user_id=u_id, auth=str(random_value))
+    new_auth = Authenticator(user_id=u_id, auth=random_value)
 
     # save everything
     new_auth.save()
@@ -190,13 +195,30 @@ def logout(request):
     # if method is POST
     if request.method == "POST":
         # get the authenticator passed in from the web layer
-        detail = {'authenticator': request.POST['authenticator']}
+        auth = request.POST['authenticator']
+
+        # try to find the user with username
+        try:
+            instance = Authenticator.objects.get(auth=auth)
+            instance.delete()
+
+            context = {
+                'status': True,
+                'result': 'Logout succeeded'
+            }
+
+        # if user not found
+        except ObjectDoesNotExist:
+            context = {
+                'status': False,
+                'result': 'User is not logged in'
+            }  
 
         # return the JsonResponse
         return JsonResponse(context)
 
     # if trying to GET
-    return HttpReponse("Error, cannot complete GET request")
+    return HttpResponse("Error, cannot complete GET request")
 
 
 # # Create your views here.

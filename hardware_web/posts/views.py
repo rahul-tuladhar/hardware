@@ -132,21 +132,26 @@ def login(request):
 
 
 # logout view
+@csrf_exempt
 def logout(request):
-    # #get the authenticator for the user
-    # detail = {'authenticator': request.COOKIES['authenticator']}
 
-    # #pass encoded data to the experience layer api
-    # enc_data = urllib.parse.urlencode(detail).encode('utf-8')
-    # req = urllib.request.Request('http://exp-api:8000/api/logout/', enc_data)
+    #get the authenticator for the user
+    detail = {'authenticator': request.COOKIES.get('authenticator')}
 
-    # #get the return json
-    # json_response = urllib.request.urlopen(req).read().decode('utf-8')
-    # context = json.loads(json_response)
+    #pass encoded data to the experience layer api
+    enc_data = urllib.parse.urlencode(detail).encode('utf-8')
+    req = urllib.request.Request('http://exp-api:8000/api/logout/', enc_data)
+
+    #get the return json
+    json_response = urllib.request.urlopen(req).read().decode('utf-8')
+    context = json.loads(json_response)
 
     # #delete the cookie
     # response = HttpResponseRedirect(reverse('home'))
     # response.delete_cookie('authenticator') 
 
+    if context['status'] != True:
+        return render(request, 'index.html', context)
+
     # return the successful logout page
-    return render(request, 'logout.html')
+    return render(request, 'logout.html', context)

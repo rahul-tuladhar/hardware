@@ -3,6 +3,7 @@
 <h3>Welcome to the homepage</h3>
     <h1>Posts</h1>
 <ul>
+	{% csrf_token %}
 	{% if data %}
 	  	{% for post in data %}
 		    <li>
@@ -12,6 +13,11 @@
 	{% else %}
 		<p> No posts found </p>
 	{% endif %}
+	<form action="/logout/" method="post">
+		{{result}}
+		<button type="submit" class="btn btn-info btn-lg btn-block" id="id_logout">Logout</button>
+	</form>
+
 </ul>
 
 {% endblock %}
