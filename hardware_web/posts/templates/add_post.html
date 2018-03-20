@@ -1,9 +1,12 @@
 {% extends 'base.html' %}
 
 {% block content %}
-  <form action="{% url 'add_post' %}" method="post">
-    {% csrf_token %}
-    {{ form }}
-    <input type="submit" value="Add" />
-  </form>
+  <h1>Create a new Post</h1>
+  <div class="form-group">
+    <form action="{% url 'add_post' %}" method="post">
+      {% csrf_token %}
+      {{ form.as_p }}
+      <input type="submit" value="Add" />
+    </form>
+  </div>
 {% endblock %}

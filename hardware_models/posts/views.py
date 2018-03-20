@@ -11,36 +11,26 @@ def home(request):
 
     # if attempting to get data from DB
     if request.method == 'GET':
-
         try:
             # getting all of the posts
             all_posts = Post.objects.all().values()
-
             # append each post to a dictionary
             for post in all_posts:
                 all_posts_dict[post['id']] = post
-
             # response object showing that it worked
             response = {'status': True, 'result': all_posts_dict}
-
             # return json object with success message
             return JsonResponse(response, safe=False)
-
         except ObjectDoesNotExist:
-
             # response object showing that it failed
             response = {'status': False, 'result': all_posts_dict}
-
             # return json object with failure message
             return JsonResponse(response, safe=False)
-
     # if attempting to save data to DB
     if request.method == 'POST':
         all_posts = Post.objects.all().values()
         all_posts_dict = {'status': 'Nothing to POST'}
-
     return JsonResponse(all_posts_dict, safe=False)
-
 
 # returns the details of a specific post
 def post_detail(request, id):
@@ -49,16 +39,12 @@ def post_detail(request, id):
         try:
             post = Post.objects.get(id=id)
             post_dict = model_to_dict(post)
-
         except ObjectDoesNotExist:
             post_dict = {'error': 'object does not exist'}
-
     # if trying to post information to the DB
     if request.method == 'POST':
         post_dict = {'status': 'nothing to POST, only viewing a post detail'}
-
     return JsonResponse(post_dict, safe=False)
-
 
 def edit_post(request, id):
     """
@@ -91,6 +77,19 @@ def edit_post(request, id):
             post_dict = {'status': 'ObjectDoesNotExist'}
     return JsonResponse(post_dict, safe=False)
 
+
+def add_post(request):
+    if (request.method =='POST'):
+        new_post = Post()
+        new_post.author = request.POST.get('author')
+        new_post.description = request.POST.get('description')
+        new_post.location = request.POST.get('location')
+        new_post.part = request.POST.get('part')
+        new_post.payment_method = request.POST.get('payment_method')
+        new_post.price = request.POST.get('price')
+        new_post.transaction_type = request.POST.get('transaction_type')
+        new_post.title = request.POST.get('title')
+        new_post.save()
 
 
 #     from django.shortcuts import render
@@ -161,4 +160,3 @@ def edit_post(request, id):
 
 
 #     return JsonResponse(all_profiles_dict, safe=False)
-

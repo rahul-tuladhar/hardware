@@ -6,7 +6,7 @@ models:
       - "8001:8000"
    volumes:
       - ./hardware_models:/app
-   command: bash -c "python manage.py makemigrations posts && python manage.py migrate && mod_wsgi-express start-server --reload-on-changes hardware_models/wsgi.py"
+   command: bash -c "pip install requests && python manage.py makemigrations posts && python manage.py migrate && mod_wsgi-express start-server --reload-on-changes hardware_models/wsgi.py"
 
 exp:
    image: tp33/django
@@ -16,7 +16,7 @@ exp:
       - "8002:8000"
    volumes:
       - ./hardware_exp:/app
-   command: "mod_wsgi-express start-server --reload-on-changes hardware_exp/wsgi.py"
+   command: bash -c "pip install requests && mod_wsgi-express start-server --reload-on-changes hardware_exp/wsgi.py"
 
 web:
    image: tp33/django
@@ -26,4 +26,4 @@ web:
       - "8000:8000"
    volumes:
       - ./hardware_web:/app
-   command: "mod_wsgi-express start-server --reload-on-changes hardware_web/wsgi.py"
+   command: bash -c "pip install requests && mod_wsgi-express start-server --reload-on-changes hardware_web/wsgi.py"
