@@ -100,14 +100,14 @@ def register(request):
 @csrf_exempt
 def login(request):
 
-    # see if the user is already logged in
-    if request.COOKIES.get('authenticator'):
-
-        # fail to login
-        return render(request, 'login.html', {'error': 'Please logout before logging in again', 'form': LoginForm()})
-
     # if request is POST, must process data from form
     if request.method == 'POST':
+
+        # see if the user is already logged in
+        if request.COOKIES.get('authenticator'):
+
+            # fail to login
+            return render(request, 'login.html', {'error': 'Please logout before logging in again', 'form': LoginForm()})
 
         # create form instance and populate it with data from the request
         form = LoginForm(request.POST)
@@ -152,34 +152,28 @@ def login(request):
 @csrf_exempt
 def logout(request):
 
-    #if POST
-    if request.method == "POST":
+    #if an authenticator cookie exists
+    if request.COOKIES.get('authenticator'):
 
-        #if an authenticator cookie exists
-        if request.COOKIES.get('authenticator'):
+        # get the authenticator for the user
+        detail = {'authenticator': request.COOKIES.get('authenticator')}
 
-            # get the authenticator for the user
-            detail = {'authenticator': request.COOKIES.get('authenticator')}
+        #pass encoded data to the experience layer api
+        req = requests.post('http://exp-api:8000/api/logout/', data=detail)
 
-            #pass encoded data to the experience layer api
-            req = requests.post('http://exp-api:8000/api/logout/', data=detail)
+        #get the return json
+        context = req.json()
 
-            #get the return json
-            context = req.json()
+        # error checking
+        if (not context) or (context['status'] != True):
+            return render(request, 'index.html', {'error': context['result']})
 
-            # error checking
-            if (not context) or (context['status'] != True):
-                return render(request, 'index.html', {'error': context['result']})
+        #delete the cookie
+        response = HttpResponseRedirect(reverse('logout'))
+        response.delete_cookie('authenticator') 
 
-            #delete the cookie
-            response = HttpResponseRedirect(reverse('logout'))
-            response.delete_cookie('authenticator') 
-
-            #go to logout screen
-            return response
-
-        #if nobody is logged in
-        return render(request, 'index.html', {'error': 'You are not logged in'})
+        #go to logout screen
+        return response
 
     #if GET
     return render(request, 'logout.html')
