@@ -80,7 +80,6 @@ def edit_post(request, id):
     return JsonResponse(post_dict, safe=False)
 
 # registering a new user
-@csrf_exempt
 def register(request):
 
     # if method is POST
@@ -151,10 +150,7 @@ def login(request):
 
 
 def create_authenticator(u_id):
-    """ Creates new object
-        :param user_id: Integer associated with auth
-        :return: JsonResponse
-        """
+
     random_value = hmac.new(
         key = settings.SECRET_KEY.encode('utf-8'),
         msg = os.urandom(32),
@@ -192,6 +188,7 @@ def check_authenticator(authenticator, u_id):
 
 
 def logout(request):
+
     # if method is POST
     if request.method == "POST":
         # get the authenticator passed in from the web layer
@@ -200,11 +197,11 @@ def logout(request):
         # try to find the user with username
         try:
             instance = Authenticator.objects.get(auth=auth)
-            instance.delete()
+            # instance.delete()
 
             context = {
                 'status': True,
-                'result': 'Logout succeeded'
+                'result': model_to_dict(instance)['auth']
             }
 
         # if user not found

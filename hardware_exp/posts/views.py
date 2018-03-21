@@ -27,7 +27,7 @@ def post_detail(request, id):
     # return
     return JsonResponse(context)
 
-@csrf_exempt
+
 def register(request):
     # if method is POST
     if request.method == "POST":
