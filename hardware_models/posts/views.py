@@ -133,7 +133,7 @@ def login(request):
 
             context = {
                 'status': True,
-                'result': auth
+                'result': auth['auth']
             }
 
         # if user not found
@@ -167,11 +167,11 @@ def create_authenticator(u_id):
     # save everything
     new_auth.save()
 
+    # turn into dictionary
     auth_dict = model_to_dict(new_auth)
-    context = {
-        'result': auth_dict
-    }
-    return context
+
+    # return 
+    return auth_dict
 
 
 def check_authenticator(authenticator, u_id):

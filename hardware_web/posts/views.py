@@ -1,5 +1,6 @@
 from django.shortcuts import render
 import urllib.request
+import requests
 import urllib.parse
 from django.http import HttpResponse, HttpResponseRedirect
 import json
@@ -11,9 +12,8 @@ from .forms import *
 # sends GET request to the URL then returns a JsonResponse dictionary for homepage
 def home(request):
     # get the json response
-    req = urllib.request.Request('http://exp-api:8000/api/home/')
-    json_response = urllib.request.urlopen(req).read().decode('utf-8')
-    response = json.loads(json_response)
+    req = requests.get('http://exp-api:8000/api/home/')
+    response = req.json()
 
     context = {
         'data': response['result'],
@@ -26,11 +26,10 @@ def home(request):
 # sends a GET reqeust to the URL then returns a JsonResponse for post_detail
 def post_detail(request, id):
     # get the json response
-    req = urllib.request.Request('http://exp-api:8000/api/post_detail/' + str(id))
-    json_response = urllib.request.urlopen(req).read().decode('utf-8')
+    req = requests.get('http://exp-api:8000/api/post_detail/' + str(id))
 
     # set the context to be the single post
-    context = json.loads(json_response)
+    context = req.json()
 
     # return
     return render(request, 'post_detail.html', context)
@@ -57,12 +56,10 @@ def register(request):
             detail = {'email': email, 'password': password, 'username': username, 'display_name': display_name}
 
             #pass encoded data to the experience layer api
-            enc_data = urllib.parse.urlencode(detail).encode('utf-8')
-            req = urllib.request.Request('http://exp-api:8000/api/register/', enc_data)
+            req = requests.post('http://exp-api:8000/api/register/', data=detail)
 
             #get the return json
-            json_response = urllib.request.urlopen(req).read().decode('utf-8')
-            context = json.loads(json_response)
+            context = req.json()
 
             #error checking
             if not context:
@@ -84,6 +81,16 @@ def register(request):
 # login view
 @csrf_exempt
 def login(request):
+
+    # test to see if user is already logged in
+    # if request.COOKIES.get('authenticator'):
+
+    #     detail = {'authenticator': request.COOKIES.get('authenticator')}
+
+    #     req = requests.post('http://exp-api:8000/api/login/', data=detail)
+    #     context = req.json()
+
+
     # if request is POST, must process data from form
     if request.method == 'POST':
 
@@ -100,12 +107,10 @@ def login(request):
             detail = {'password': password, 'username': username}
 
             # pass encoded data to the experience layer api
-            enc_data = urllib.parse.urlencode(detail).encode('utf-8')
-            req = urllib.request.Request('http://exp-api:8000/api/login/', enc_data)
+            req = requests.post('http://exp-api:8000/api/login/', data=detail)
 
             # get the return json
-            json_response = urllib.request.urlopen(req).read().decode('utf-8')
-            context = json.loads(json_response)
+            context = req.json()
 
             # error checking
             if not context:
@@ -113,15 +118,12 @@ def login(request):
             if context['status'] != True:
                 return render(request, 'register.html', {'error': context['result'], 'form': RegistrationForm()})
 
-            # get returned authenticator
-            authenticator = context['result']
-
             # logged in successfully, go to home page and set cookie
             response = HttpResponseRedirect(reverse('home'))
-            response.set_cookie('authenticator', authenticator)
+            response.set_cookie('authenticator', context['result'])
 
-            # return response
-            return render(request, 'login.html', context)
+            # return response 
+            return response
 
         # if form is not valid send an error
         else:
@@ -135,23 +137,24 @@ def login(request):
 @csrf_exempt
 def logout(request):
 
-    #get the authenticator for the user
-    detail = {'authenticator': request.COOKIES.get('authenticator')}
+    if request.method == "POST":
 
-    #pass encoded data to the experience layer api
-    enc_data = urllib.parse.urlencode(detail).encode('utf-8')
-    req = urllib.request.Request('http://exp-api:8000/api/logout/', enc_data)
+        #get the authenticator for the user
+        detail = {'authenticator': request.COOKIES.get('authenticator')}
 
-    #get the return json
-    json_response = urllib.request.urlopen(req).read().decode('utf-8')
-    context = json.loads(json_response)
+        #pass encoded data to the experience layer api
+        req = requests.post('http://exp-api:8000/api/logout/', data=detail)
 
-    # #delete the cookie
-    # response = HttpResponseRedirect(reverse('home'))
-    # response.delete_cookie('authenticator') 
+        #get the return json
+        context = req.json()
 
-    if context['status'] != True:
-        return render(request, 'index.html', context)
+        #delete the cookie
+        response = HttpResponseRedirect(reverse('home'))
+        response.delete_cookie('authenticator') 
 
-    # return the successful logout page
-    return render(request, 'logout.html', context)
+        if context['status'] != True:
+            return render(request, 'index.html', context)
+
+    # return the successful logout page if GET or successful POST
+    return render(request, 'logout.html')
+
