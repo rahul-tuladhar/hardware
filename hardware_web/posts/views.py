@@ -36,6 +36,7 @@ def post_detail(request, id):
 
 
 # register a user
+@csrf_exempt
 def register(request):
     # if request is POST, must process data from form
     if request.method == 'POST':
@@ -77,18 +78,33 @@ def register(request):
     return render(request, 'register.html', {'form': RegistrationForm()})
 
 
+# # check to see if the user is already logged in
+# def check_auth(request):
+
+#     # if some cookie exists
+#     if request.COOKIES.get('authenticator'):
+
+#         detail = {'authenticator': request.COOKIES.get('authenticator')}
+
+#         #pass encoded data to the experience layer api
+#         req = requests.post('http://exp-api:8000/api/check_auth/', data=detail)
+
+#         #get the return json
+#         context = req.json()
+
+
+#     return False;
+
+
 # login view
 @csrf_exempt
 def login(request):
 
-    # test to see if user is already logged in
-    # if request.COOKIES.get('authenticator'):
+    # see if the user is already logged in
+    if request.COOKIES.get('authenticator'):
 
-    #     detail = {'authenticator': request.COOKIES.get('authenticator')}
-
-    #     req = requests.post('http://exp-api:8000/api/login/', data=detail)
-    #     context = req.json()
-
+        # fail to login
+        return render(request, 'login.html', {'error': 'Please logout before logging in again', 'form': LoginForm()})
 
     # if request is POST, must process data from form
     if request.method == 'POST':
@@ -113,9 +129,9 @@ def login(request):
 
             # error checking
             if not context:
-                return render(request, 'register.html', {'error': "Login failed", 'form': LoginForm()})
+                return render(request, 'login.html', {'error': "Login failed", 'form': LoginForm()})
             if context['status'] != True:
-                return render(request, 'register.html', {'error': context['result'], 'form': RegistrationForm()})
+                return render(request, 'login.html', {'error': context['result'], 'form': LoginForm()})
 
             # logged in successfully, go to home page and set cookie
             response = HttpResponseRedirect(reverse('home'))

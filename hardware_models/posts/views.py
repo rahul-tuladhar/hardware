@@ -80,6 +80,7 @@ def edit_post(request, id):
     return JsonResponse(post_dict, safe=False)
 
 # registering a new user
+@csrf_exempt
 def register(request):
 
     # if method is POST
@@ -115,6 +116,7 @@ def register(request):
     # if trying to GET
     return HttpResponse("Error, cannot complete GET request")
 
+
 @csrf_exempt
 def login(request):
 
@@ -127,7 +129,7 @@ def login(request):
 
         # try to find the user with username
         try:
-            profile = Profile.objects.get(username=username)
+            profile = Profile.objects.get(username=username, password=password)
             auth = create_authenticator(profile.id)
 
             context = {
@@ -139,7 +141,7 @@ def login(request):
         except ObjectDoesNotExist:
             context = {
                 'status': False,
-                'result': 'User does not exist'
+                'result': 'Invalid username or username/password combination'
             }  
 
         # return the JsonResponse
@@ -149,6 +151,7 @@ def login(request):
     return HttpResponse("Error, cannot complete GET request")
 
 
+# create the authenticator instance
 def create_authenticator(u_id):
 
     random_value = hmac.new(
@@ -170,27 +173,34 @@ def create_authenticator(u_id):
     return auth_dict
 
 
-def check_authenticator(authenticator, u_id):
-    """
-        Validates authenticator object
-        :param authenticator: Object's 256 digit integer value
-        :param user_id: Int associated with auth
-        :return: Returns True if autenticator associated with user_id is in the db
-    """
+# # see if the authenticator exists
+# @csrf_exempt
+# def check_auth(authenticator):
 
-    try:
-        profile = Authenticator.objects.get(auth=authenticator, user_id=u_id)
-        return True
+#     # if method is POST
+#     if request.method == "POST":
 
-    # if user not found
-    except ObjectDoesNotExist:
-        return False
+#         # get the authenticator passed in from the web layer
+#         auth = request.POST['authenticator']
+
+#         try:
+#             profile = Authenticator.objects.get(auth=authenticator)
+#             return {'status': True, 'result': 'Already logged in'}
+
+#         # if user not found
+#         except ObjectDoesNotExist:
+#             return {'status': False}
+
+#     # if trying to GET
+#     return HttpResponse("Error, cannot complete GET request")
 
 
+@csrf_exempt
 def logout(request):
 
     # if method is POST
     if request.method == "POST":
+
         # get the authenticator passed in from the web layer
         auth = request.POST['authenticator']
 
@@ -202,7 +212,7 @@ def logout(request):
                 'status': True,
                 'result': model_to_dict(instance)['auth']
             }
-            
+
             instance.delete()
 
         # if user not found

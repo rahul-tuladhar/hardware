@@ -11,7 +11,9 @@
 
    			{% csrf_token %}
 
-        {{result}}
+        {% if error %}
+          {{error}} <br> <br>
+        {% endif %}
 
    			<!-- post all errors -->
    			{% for error in form.non_field_errors %}
@@ -36,5 +38,6 @@
 		<!--if already have an account, can redirect to login-->
 		<p> Need to create an account? <a href="/register/">Register</a></p>
     <p> Already logged in? <a href="/home/">Homepage</a></p>
+    <p> Need to logout? <a href="/logout/">Logout</a></p>
    	</body>
 </html>
