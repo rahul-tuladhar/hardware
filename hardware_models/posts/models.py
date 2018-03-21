@@ -30,7 +30,7 @@ class Post(models.Model):
         ('SELLING', 'Selling'),
         ('TRADING', 'Trading'),
     )
-    #author = models.ForeignKey(Profile, on_delete=models.CASCADE)
+    author = models.ForeignKey(Profile, on_delete=models.CASCADE)
     date = models.DateTimeField(default=timezone.now)
     description = models.TextField(max_length=2048)
     location = models.CharField(default='JPA', max_length=24)

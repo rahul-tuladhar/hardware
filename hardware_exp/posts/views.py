@@ -28,16 +28,18 @@ def post_detail(request, id):
 def add_post(request):
     if (request.method == 'POST'):
         data = {
-        'author': request.POST.get('author'),
-        'description': request.POST.get('description'),
-        'location': request.POST.get('location'),
-        'part': request.POST.get('part'),
-        'payment_method': request.POST.get('payment_method'),
-        'price': request.POST.get('price'),
-        'transaction_type': request.POST.get('transaction_type'),
-        'title': request.POST.get('title'),
+            'author': request.POST.get('author'),
+            'description': request.POST.get('description'),
+            'location': request.POST.get('location'),
+            'part': request.POST.get('part'),
+            'payment_method': request.POST.get('payment_method'),
+            'price': request.POST.get('price'),
+            'transaction_type': request.POST.get('transaction_type'),
+            'title': request.POST.get('title'),
         }
-
-        req = requests.post('http://models-api:8000/api/add_post', data = data)
-        context = {'status': 'ok'}
-        return JsonResponse(context)
+        req = requests.post('http://models-api:8000/api/add_post/', data=data)
+        context = req.json()
+        return JsonResponse(context, safe=False)
+    else: # GET request
+        context = {'status': False}
+        return JsonResponse(context, safe=False)

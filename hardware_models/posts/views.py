@@ -1,4 +1,4 @@
-from .models import Post
+from .models import Post, Profile
 from django.http import JsonResponse
 from django.core.exceptions import ObjectDoesNotExist
 from django.forms.models import model_to_dict
@@ -77,20 +77,29 @@ def edit_post(request, id):
             post_dict = {'status': 'ObjectDoesNotExist'}
     return JsonResponse(post_dict, safe=False)
 
-
 def add_post(request):
     if (request.method =='POST'):
-        new_post = Post()
-        new_post.author = request.POST.get('author')
-        new_post.description = request.POST.get('description')
-        new_post.location = request.POST.get('location')
-        new_post.part = request.POST.get('part')
-        new_post.payment_method = request.POST.get('payment_method')
-        new_post.price = request.POST.get('price')
-        new_post.transaction_type = request.POST.get('transaction_type')
-        new_post.title = request.POST.get('title')
-        new_post.save()
+        searched_author = Profile.objects.get(username=request.POST.get('author'))
+        new_post = Post(
+            author = searched_author,
+            description = request.POST.get('description'),
+            location = request.POST.get('location'),
+            part = request.POST.get('part'),
+            payment_method = request.POST.get('payment_method'),
+            price = request.POST.get('price'),
+            transaction_type = request.POST.get('transaction_type'),
+            title = request.POST.get('title'),
+        )
+        try:
+            new_post.save()
+            context = {'status': True, 'result': 'Success'}
+        except:
+            context = {'status': False, 'result': 'Failed'}
 
+        return JsonResponse(context)
+    else:
+        context = {'status': True, 'result': 'Get'}
+        return JsonResponse(context)
 
 #     from django.shortcuts import render
 # from login.models import Group, Profile
