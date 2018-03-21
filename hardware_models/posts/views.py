@@ -197,12 +197,13 @@ def logout(request):
         # try to find the user with username
         try:
             instance = Authenticator.objects.get(auth=auth)
-            # instance.delete()
 
             context = {
                 'status': True,
                 'result': model_to_dict(instance)['auth']
             }
+            
+            instance.delete()
 
         # if user not found
         except ObjectDoesNotExist:
