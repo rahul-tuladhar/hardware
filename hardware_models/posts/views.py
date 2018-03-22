@@ -142,7 +142,7 @@ def login(request):
 
         # try to find the user with username
         try:
-            profile = Profile.objects.get(username=username, password=make_password(password))
+            profile = Profile.objects.get(username=username, password=password)
             auth = create_authenticator(profile.id)
 
             context = {
