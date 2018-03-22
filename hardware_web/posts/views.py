@@ -7,6 +7,7 @@ import json
 from django.urls import reverse
 from django.views.decorators.csrf import csrf_exempt
 from .forms import *
+from django.contrib.auth.hashers import make_password
 
 
 # sends GET request to the URL then returns a JsonResponse dictionary for homepage
@@ -87,7 +88,7 @@ def register(request):
 #         detail = {'authenticator': request.COOKIES.get('authenticator')}
 
 #         #pass encoded data to the experience layer api
-#         req = requests.post('http://exp-api:8000/api/check_auth/', data=detail)
+#         req = reque'sts.post('http://exp-api:8000/api/check_auth/', data=detail)
 
 #         #get the return json
 #         context = req.json()

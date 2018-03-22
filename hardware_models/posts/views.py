@@ -11,6 +11,7 @@ import json
 from hardware_models import settings
 import os
 import hmac
+from django.contrib.auth.hashers import make_password
 
 #returns the homepage of posts
 def home(request):
@@ -129,7 +130,7 @@ def login(request):
 
         # try to find the user with username
         try:
-            profile = Profile.objects.get(username=username, password=password)
+            profile = Profile.objects.get(username=username, password=make_password(password))
             auth = create_authenticator(profile.id)
 
             context = {
