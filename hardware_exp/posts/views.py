@@ -1,13 +1,9 @@
 from django.shortcuts import render
 from django.http import JsonResponse, HttpResponse
-import urllib.request
 import requests
 from django.urls import reverse
-import urllib.parse
 import requests
 from django.views.decorators.csrf import csrf_exempt
-import json
-
 
 # sends GET request to the URL(s) then returns a JsonResponse dictionary for homepage
 def home(request):
@@ -24,7 +20,11 @@ def post_detail(request, id):
     req = requests.get('http://models-api:8000/api/post_detail/' + str(id))
     context = req.json()
 
-    # return
+    #get json response
+    req = requests.get('http://models-api:8000/api/post_detail/' + str(id))
+    response = req.json()
+
+    context = response
     return JsonResponse(context)
 
 def add_post(request):
