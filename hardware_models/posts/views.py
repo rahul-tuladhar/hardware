@@ -187,26 +187,26 @@ def create_authenticator(u_id):
 
 
 
-# # see if the authenticator exists
-# @csrf_exempt
-# def check_auth(authenticator):
+# see if the authenticator exists
+@csrf_exempt
+def check_auth(authenticator):
 
-#     # if method is POST
-#     if request.method == "POST":
+    # if method is POST
+    if request.method == "POST":
 
-#         # get the authenticator passed in from the web layer
-#         auth = request.POST['authenticator']
+        # get the authenticator passed in from the web layer
+        auth = request.POST['authenticator']
 
-#         try:
-#             profile = Authenticator.objects.get(auth=authenticator)
-#             return {'status': True, 'result': 'Already logged in'}
+        try:
+            profile = Authenticator.objects.get(auth=authenticator)
+            return {'status': True, 'result': 'Can work'}
 
-#         # if user not found
-#         except ObjectDoesNotExist:
-#             return {'status': False}
+        # if user not found
+        except ObjectDoesNotExist:
+            return {'status': False, 'result': 'You must be logged in to do this'}
 
-#     # if trying to GET
-#     return HttpResponse("Error, cannot complete GET request")
+    # if trying to GET
+    return HttpResponse("Error, cannot complete GET request")
 
 
 @csrf_exempt

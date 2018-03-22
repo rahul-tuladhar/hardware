@@ -35,8 +35,15 @@ def post_detail(request, id):
 
 
 def add_post(request):
+
+    # if check_auth(request) == False:
+
+    #     return render(request, 'index.html', {'add_error': 'Must be logged in to do this'})
+
     if request.method == 'POST':
+
         form = AddPostForm(request.POST)
+
         if form.is_valid():
             data = {
                 'author': form.cleaned_data['author'],
@@ -110,22 +117,23 @@ def register(request):
     return render(request, 'register.html', {'form': RegistrationForm()})
 
 
-# # check to see if the user is already logged in
-# def check_auth(request):
+# check to see if the user is already logged in
+def check_auth(request):
 
-#     # if some cookie exists
-#     if request.COOKIES.get('authenticator'):
+    # if some cookie exists
+    if request.COOKIES.get('authenticator'):
 
-#         detail = {'authenticator': request.COOKIES.get('authenticator')}
+        detail = {'authenticator': request.COOKIES.get('authenticator')}
 
-#         #pass encoded data to the experience layer api
-#         req = reque'sts.post('http://exp-api:8000/api/check_auth/', data=detail)
+        #pass encoded data to the experience layer api
+        req = requests.post('http://exp-api:8000/api/check_auth/', data=detail)
 
-#         #get the return json
-#         context = req.json()
+        #get the return json
+        context = req.json()
 
+        return context['status']
 
-#     return False;
+    return False;
 
 
 # login view

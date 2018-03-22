@@ -8,4 +8,5 @@ urlpatterns = [
     url(r'^register/$', register, name='register'),
     url(r'^login/$', login, name='login'),
     url(r'^logout/$', logout, name='logout'),
+    url(r'^check_auth/$', check_auth, name='check_auth'),
 ]

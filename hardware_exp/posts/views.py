@@ -66,25 +66,25 @@ def register(request):
     # if trying to GET
     return HttpResponse("Error, cannot complete GET request")
 
-# @csrf_exempt
-# def check_auth(request):
+@csrf_exempt
+def check_auth(request):
 
-#     # if method is POST
-#     if request.method == "POST":
-#         # get all the details posted from web layer
-#         detail = {'authenticator': request.POST['authenticator']}
+    # if method is POST
+    if request.method == "POST":
+        # get all the details posted from web layer
+        detail = {'authenticator': request.POST['authenticator']}
 
-#         # pass encoded data to the model layer api
-#         req = requests.post('http://models-api:8000/api/check_auth/', data=detail)
+        # pass encoded data to the model layer api
+        req = requests.post('http://models-api:8000/api/check_auth/', data=detail)
 
-#         # get the return json
-#         context = req.json()
+        # get the return json
+        context = req.json()
 
-#         # return the JsonResponse
-#         return JsonResponse(context)
+        # return the JsonResponse
+        return JsonResponse(context)
 
-#     # if trying to GET
-#     return HttpResponse("Error, cannot complete GET request")
+    # if trying to GET
+    return HttpResponse("Error, cannot complete GET request")
 
 
 @csrf_exempt
