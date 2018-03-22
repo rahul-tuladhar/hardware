@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+{% extends 'base.html' %}
+{% load staticfiles %}
+{% block content %}
+    <head>
+        <meta charset="utf-8">
+        <title>Login</title>
+    </head>
+   	<body>
+
+		<form action="/login/" method="post">
+        <br> 
+   			{% csrf_token %}
+
+        {% if error %}
+          {{error}} <br> <br>
+        {% endif %}
+
+   			<!-- post all errors -->
+   			{% for error in form.non_field_errors %}
+                   {{error}}
+            {% endfor %}
+
+            <!-- actual fields -->
+            {% for field in form %}
+				{{field.errors}}
+            	{{field.label}} 
+            	{{field}}
+            	<br>
+            	<br>
+            {% endfor %}
+
+			<!--submit button -->
+			<button type="submit" class="btn btn-info btn-lg btn-block" id="id_login">Login</button>
+
+		</form>
+
+
+		<!--if already have an account, can redirect to login-->
+		<p> Need to create an account? <a href="/register/">Register</a></p>
+    <p> Already logged in? <a href="/home/">Homepage</a></p>
+    <p> Need to logout? <a href="/logout/">Logout</a></p>
+   	</body>
+{% endblock %}

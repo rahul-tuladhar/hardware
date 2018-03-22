@@ -1,16 +1,21 @@
-from .models import Post, Profile
-from django.http import JsonResponse
+from .models import Profile, Post, Authenticator
+from django.http import JsonResponse, HttpResponse
 from django.core.exceptions import ObjectDoesNotExist
 from django.forms.models import model_to_dict
+from django.views.decorators.csrf import csrf_exempt
+from django.db import IntegrityError
+from random import randint
+from hardware_models import settings
+import os
+import hmac
+from django.contrib.auth.hashers import make_password
 
-# returns a JsonResponse dictionary with all of the Post objects' attributes
+#returns the homepage of posts
 def home(request):
+    all_posts_dict = {}  # result dictionary
 
-    # result dictionary
-    all_posts_dict = {}
+    if request.method == 'GET':  # if attempting to get data from DB
 
-    # if attempting to get data from DB
-    if request.method == 'GET':
         try:
             # getting all of the posts
             all_posts = Post.objects.all().values()
@@ -34,7 +39,7 @@ def home(request):
 
 # returns the details of a specific post
 def post_detail(request, id):
-    # if attemping to get data from DB
+
     if request.method == 'GET':
         try:
             post = Post.objects.get(id=id)
@@ -47,35 +52,18 @@ def post_detail(request, id):
     return JsonResponse(post_dict, safe=False)
 
 def edit_post(request, id):
-    """
-    Returns a JsonResponse dictionary of a post during a POST Request.
-    :param request:
-    :param post_title:
-    :param post_author:
-    :param post_description:
-    :param post_price:
-    :return:
-    """
+
     if request.method == 'GET':
         post_dict = {'status': 'should not get request edit_post'}
     # TODO: Fully implement the entity API layer of this method
     if request.method == 'POST':
         try:
             post = Post.objects.get(id=id)
-            # if (request.POST is not None):
-            #     post.title = post_title
-            # if (post_description is not None):
-            #     post.description = post_description
-            # if (post_author is not None):
-            #     post.author = post_author
-            # if (post_price is not None):
-            #     post.price = float(post_price)
-            # post.save()
             post_dict = model_to_dict(post)
-            del post_dict['image']
         except ObjectDoesNotExist:
             post_dict = {'status': 'ObjectDoesNotExist'}
     return JsonResponse(post_dict, safe=False)
+
 
 def add_post(request):
     if (request.method =='POST'):
@@ -100,3 +88,180 @@ def add_post(request):
     else:
         context = {'status': True, 'result': 'Get'}
         return JsonResponse(context)
+# registering a new user
+@csrf_exempt
+def register(request):
+
+    # if method is POST
+    if request.method == "POST":
+
+        # get post details
+        display_name = request.POST['display_name']
+        email = request.POST['email']
+        password = request.POST['password']
+        username = request.POST['username']
+
+        # create the user profile
+        new_profile = Profile(display_name=display_name, email=email, password=password, username=username)
+
+        # see if user already exists with that username
+        try:
+            new_profile.save()
+            context = {
+            'status': True,
+            'result': 'User profile successfully created'
+            }
+
+        # if the unique username already exists
+        except IntegrityError:
+            context = {
+            'status': False,
+            'result': 'User already exists with that username'
+            }
+
+        # return the JsonResponse
+        return JsonResponse(context)
+
+    # if trying to GET
+    return HttpResponse("Error, cannot complete GET request")
+
+
+@csrf_exempt
+def login(request):
+
+    # if method is POST
+    if request.method == "POST":
+
+        # getting POST data
+        username = request.POST['username']
+        password = request.POST['password']
+
+        # try to find the user with username
+        try:
+            profile = Profile.objects.get(username=username, password=password)
+            auth = create_authenticator(profile.id)
+
+            context = {
+                'status': True,
+                'result': auth['auth']
+            }
+
+        # if user not found
+        except ObjectDoesNotExist:
+            context = {
+                'status': False,
+                'result': 'Invalid username or username/password combination'
+            }  
+
+        # return the JsonResponse
+        return JsonResponse(context)
+
+    # if trying to GET
+    return HttpResponse("Error, cannot complete GET request")
+
+
+# create the authenticator instance
+def create_authenticator(u_id):
+
+    random_value = hmac.new(
+        key = settings.SECRET_KEY.encode('utf-8'),
+        msg = os.urandom(32),
+        digestmod = 'sha256',
+    ).hexdigest()
+
+    # create a new auth
+    new_auth = Authenticator(user_id=u_id, auth=random_value)
+
+    # save everything
+    new_auth.save()
+
+    # turn into dictionary
+    auth_dict = model_to_dict(new_auth)
+
+    # return 
+    return auth_dict
+
+
+
+# # see if the authenticator exists
+# @csrf_exempt
+# def check_auth(authenticator):
+
+#     # if method is POST
+#     if request.method == "POST":
+
+#         # get the authenticator passed in from the web layer
+#         auth = request.POST['authenticator']
+
+#         try:
+#             profile = Authenticator.objects.get(auth=authenticator)
+#             return {'status': True, 'result': 'Already logged in'}
+
+#         # if user not found
+#         except ObjectDoesNotExist:
+#             return {'status': False}
+
+#     # if trying to GET
+#     return HttpResponse("Error, cannot complete GET request")
+
+
+@csrf_exempt
+def logout(request):
+
+    # if method is POST
+    if request.method == "POST":
+
+        # get the authenticator passed in from the web layer
+        auth = request.POST['authenticator']
+
+        # try to find the user with username
+        try:
+            instance = Authenticator.objects.get(auth=auth)
+
+            context = {
+                'status': True,
+                'result': model_to_dict(instance)['auth']
+            }
+
+            instance.delete()
+
+        # if user not found
+        except ObjectDoesNotExist:
+            context = {
+                'status': False,
+                'result': 'User is not logged in'
+            }  
+
+        # return the JsonResponse
+        return JsonResponse(context)
+
+    # if trying to GET
+    return HttpResponse("Error, cannot complete GET request")
+
+
+# # Create your views here.
+# def user_profile(request, username=None):
+#     """
+#     :param request: HTTP request
+#     :param username: Given username for retrieving object attributes
+#     :return: JsonResponse of serialized attributes
+#     """
+
+#     if request.method == 'GET':
+#         try:
+#             profile = Profile.objects.get(username=username)
+#             x = model_to_dict(profile)
+#         except ObjectDoesNotExist:
+#             return JsonResponse({'status': 'false', 'message': 'ObjectDoesNotExist'}, status=500)
+
+#     if request.method == 'POST':
+#         try:
+#             profile = Profile.objects.get(username=username)
+#             x = model_to_dict(profile)
+#             return JsonResponse({'status': 'true', 'message': 'Cannot edit'})
+#         except ObjectDoesNotExist:
+#             return JsonResponse({'status': 'false', 'message': 'ObjectDoesNotExist'})
+
+#     del x['affiliations']
+#     return JsonResponse(x, safe=False)
+

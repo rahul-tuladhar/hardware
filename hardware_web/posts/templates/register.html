@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+
+{% extends 'base.html' %}
+{% block content %}
+    <head>
+        <meta charset="utf-8">
+        <title>Register User</title>
+    </head>
+   	<body>
+   		<form action="/register/" method="POST">
+
+   			{% csrf_token %}
+        <br> 
+   			<!-- post all errors -->
+   			{% if error %}
+   			{{ error }}
+   			<br>
+   			<br>
+   			{% endif %}
+
+   			{% for error in form.non_field_errors %}
+                   {{error}}
+            {% endfor %}
+
+            <!-- actual fields -->
+            {% for field in form %}
+				{{field.errors}}
+            	{{field.label}} 
+            	{{field}}
+            	<br>
+            	<br>
+            {% endfor %}
+
+			<!--submit button -->
+			<button type="submit" class="btn btn-info btn-lg btn-block" id="id_register">Register</button>
+
+		</form>
+
+		<!--if already have an account, can redirect to login-->
+		<p> Already registered? <a href="/login/">Login</a></p>
+   	</body>
+{% endblock %}
