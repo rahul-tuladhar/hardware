@@ -22,32 +22,23 @@ def home(request):
         try:
             # getting all of the posts
             all_posts = Post.objects.all().values()
-
             # append each post to a dictionary
             for post in all_posts:
                 all_posts_dict[post['id']] = post
-
             # response object showing that it worked
             response = {'status': True, 'result': all_posts_dict}
-
             # return json object with success message
             return JsonResponse(response, safe=False)
-
         except ObjectDoesNotExist:
-
             # response object showing that it failed
             response = {'status': False, 'result': all_posts_dict}
-
             # return json object with failure message
             return JsonResponse(response, safe=False)
-
     # if attempting to save data to DB
     if request.method == 'POST':
         all_posts = Post.objects.all().values()
         all_posts_dict = {'status': 'Nothing to POST'}
-
     return JsonResponse(all_posts_dict, safe=False)
-
 
 # returns the details of a specific post
 def post_detail(request, id):
@@ -56,16 +47,12 @@ def post_detail(request, id):
         try:
             post = Post.objects.get(id=id)
             post_dict = model_to_dict(post)
-
         except ObjectDoesNotExist:
             post_dict = {'error': 'object does not exist'}
-
     # if trying to post information to the DB
     if request.method == 'POST':
         post_dict = {'status': 'nothing to POST, only viewing a post detail'}
-
     return JsonResponse(post_dict, safe=False)
-
 
 def edit_post(request, id):
 
@@ -79,6 +66,31 @@ def edit_post(request, id):
         except ObjectDoesNotExist:
             post_dict = {'status': 'ObjectDoesNotExist'}
     return JsonResponse(post_dict, safe=False)
+
+
+def add_post(request):
+    if (request.method =='POST'):
+        searched_author = Profile.objects.get(username=request.POST.get('author'))
+        new_post = Post(
+            author = searched_author,
+            description = request.POST.get('description'),
+            location = request.POST.get('location'),
+            part = request.POST.get('part'),
+            payment_method = request.POST.get('payment_method'),
+            price = request.POST.get('price'),
+            transaction_type = request.POST.get('transaction_type'),
+            title = request.POST.get('title'),
+        )
+        try:
+            new_post.save()
+            context = {'status': True, 'result': 'Success'}
+        except:
+            context = {'status': False, 'result': 'Failed'}
+
+        return JsonResponse(context)
+    else:
+        context = {'status': True, 'result': 'Get'}
+        return JsonResponse(context)
 
 # registering a new user
 @csrf_exempt
@@ -174,6 +186,7 @@ def create_authenticator(u_id):
     return auth_dict
 
 
+
 # # see if the authenticator exists
 # @csrf_exempt
 # def check_auth(authenticator):
@@ -255,5 +268,4 @@ def logout(request):
 
 #     del x['affiliations']
 #     return JsonResponse(x, safe=False)
-
 
