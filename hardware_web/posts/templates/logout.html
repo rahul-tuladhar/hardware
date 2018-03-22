@@ -1,6 +1,7 @@
 <!DOCTYPE html>
+{% extends 'base.html' %}
 {% load staticfiles %}
-<html>
+{% block content %}
     <head>
         <meta charset="utf-8">
         <title>Logout</title>
@@ -10,4 +11,4 @@
 		<h1>You've successfully logged out.</h1>
 		<p> Want to login again? <a href="/login/">Login</a></p>
    	</body>
-</html>
+{% endblock %}
