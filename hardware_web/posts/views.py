@@ -1,8 +1,5 @@
 from django.shortcuts import render
-import urllib.request
-import urllib.parse
 import requests
-import json
 from django.http import HttpResponse,  HttpResponseRedirect
 from .forms import AddPostForm
 
@@ -15,7 +12,7 @@ def home(request):
     response = req.json()
 
     context = {
-        'data': response['result'],
+        'data': response['result'].values(),
     }
 
     return render(request, 'index.html', context)
@@ -24,11 +21,11 @@ def home(request):
 def post_detail(request, id):
 
     #get the json response
-    req = urllib.request.Request('http://exp-api:8000/api/post_detail/' + str(id))
-    json_response = urllib.request.urlopen(req).read().decode('utf-8')
+    req = requests.get('http://exp-api:8000/api/post_detail/' + str(id))
+    response = req.json()
 
     #set the context to be the single post
-    context = json.loads(json_response)
+    context = response
 
     return render(request, 'post_detail.html', context)
 

@@ -6,12 +6,13 @@
 	{% if data %}
 	  	{% for post in data %}
 		    <li>
-		     	<a href="{% url 'post_detail' post %}">{{post}}</a>
+		     	<a href="{% url 'post_detail' post.id %}">{{post.title}}</a>
 		    </li>
 	  	{% endfor %}
 	{% else %}
 		<p> No posts found </p>
 	{% endif %}
+  <li>{{exp}}</li>
 </ul>
 <br>
 <a href="{% url 'add_post' %}">Add Post</a>
