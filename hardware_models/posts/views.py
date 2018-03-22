@@ -5,9 +5,6 @@ from django.forms.models import model_to_dict
 from django.views.decorators.csrf import csrf_exempt
 from django.db import IntegrityError
 from random import randint
-import urllib.request
-import urllib.parse
-import json
 from hardware_models import settings
 import os
 import hmac
@@ -91,7 +88,6 @@ def add_post(request):
     else:
         context = {'status': True, 'result': 'Get'}
         return JsonResponse(context)
-
 # registering a new user
 @csrf_exempt
 def register(request):

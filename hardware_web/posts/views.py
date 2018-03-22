@@ -1,14 +1,10 @@
 from django.shortcuts import render
-import urllib.request
 import requests
-import urllib.parse
 from django.http import HttpResponse, HttpResponseRedirect
-import json
 from django.urls import reverse
 from django.views.decorators.csrf import csrf_exempt
 from .forms import *
 from django.contrib.auth.hashers import make_password
-
 
 # sends GET request to the URL then returns a JsonResponse dictionary for homepage
 def home(request):
@@ -17,11 +13,10 @@ def home(request):
     response = req.json()
 
     context = {
-        'data': response['result'],
+        'data': response['result'].values(),
     }
 
     return render(request, 'index.html', context)
-
 
 # sends a GET reqeust to the URL then returns a JsonResponse for post_detail
 def post_detail(request, id):
@@ -30,9 +25,7 @@ def post_detail(request, id):
 
     # set the context to be the single post
     context = req.json()
-
     return render(request, 'post_detail.html', context)
-
 
 def add_post(request):
     if request.method == 'POST':
@@ -65,7 +58,6 @@ def add_post(request):
         form = AddPostForm()
 
     return render(request, 'add_post.html', {'form': form})
-
 
 # register a user
 @csrf_exempt
