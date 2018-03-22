@@ -3,6 +3,7 @@
 <h3>Welcome to the homepage</h3>
     <h1>Posts</h1>
 <ul>
+	{% csrf_token %}
 	{% if data %}
 	  	{% for post in data %}
 		    <li>
@@ -12,6 +13,12 @@
 	{% else %}
 		<p> No posts found </p>
 	{% endif %}
+	<a href="{% url 'login' %}">Login</a>
+	<form action="/logout/" method="post">
+		{{error}}
+		<button type="submit" class="btn btn-info btn-lg btn-block" id="id_logout">Logout</button>
+	</form>
+
 </ul>
 <br>
 <a href="{% url 'add_post' %}">Add Post</a>

@@ -1,6 +1,6 @@
 from django.db import models
 from django.utils import timezone
-
+from random import randint
 
 class Group(models.Model):
     """ Attributes in alphabetical order. """
@@ -14,11 +14,11 @@ class Group(models.Model):
 
 class Profile(models.Model):
     """ Attributes in alphabetical order. """
-    affiliations = models.ManyToManyField(Group)
+    # affiliations = models.ManyToManyField(Group)
     display_name = models.CharField(max_length=24)
     email = models.EmailField(max_length=254)
     password = models.CharField(max_length=50)
-    username = models.CharField(max_length=24, default='N/A')
+    username = models.CharField(max_length=24, default='N/A', unique=True)
 
     def __str__(self):
         return self.username
@@ -45,3 +45,17 @@ class Post(models.Model):
         :return: Returns the title string.
         """
         return self.title
+
+
+class Authenticator(models.Model):
+    """ Authenticator holds a large random value associated with a user id """
+    auth = models.CharField(max_length=255, primary_key=True)  # large random value as character field for now
+    date_created = models.DateTimeField(default=timezone.now)
+    user_id = models.IntegerField(default=0)
+
+    def __str__(self):
+        """
+        :return: Returns the title string.
+        """
+        return self.auth
+
