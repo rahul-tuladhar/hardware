@@ -220,7 +220,7 @@ def logout(request):
 
             context = {
                 'status': True,
-                'result': model_to_dict(instance)['auth']
+                'result': 'You have successfully logged out'
             }
 
             instance.delete()

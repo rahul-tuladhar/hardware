@@ -184,28 +184,33 @@ def login(request):
 @csrf_exempt
 def logout(request):
 
-    #if an authenticator cookie exists
-    if request.COOKIES.get('authenticator'):
+    #if post
+    if request.method == "POST":
 
-        # get the authenticator for the user
-        detail = {'authenticator': request.COOKIES.get('authenticator')}
+        #if an authenticator cookie exists
+        if request.COOKIES.get('authenticator'):
 
-        #pass encoded data to the experience layer api
-        req = requests.post('http://exp-api:8000/api/logout/', data=detail)
+            # get the authenticator for the user
+            detail = {'authenticator': request.COOKIES.get('authenticator')}
 
-        #get the return json
-        context = req.json()
+            #pass encoded data to the experience layer api
+            req = requests.post('http://exp-api:8000/api/logout/', data=detail)
 
-        # error checking
-        if (not context) or (context['status'] != True):
-            return render(request, 'index.html', {'error': context['result']})
+            #get the return json
+            context = req.json()
 
-        #delete the cookie
-        response = HttpResponseRedirect(reverse('logout'))
-        response.delete_cookie('authenticator') 
+            # error checking
+            if (not context) or (context['status'] != True):
+                return render(request, 'logout.html', {'error': context['result']})
 
-        #go to logout screen
-        return response
+            #delete the cookie
+            response = render(request, 'logout.html', {'result': context['result']})
+            response.delete_cookie('authenticator') 
+
+            #go to logout screen
+            return response
+
+        return render(request, 'logout.html', {'error': 'You are not logged in'})
 
     #if GET
     return render(request, 'logout.html')
