@@ -51,6 +51,7 @@ def post_detail(request, id):
         post_dict = {'status': 'nothing to POST, only viewing a post detail'}
     return JsonResponse(post_dict, safe=False)
 
+
 def edit_post(request, id):
 
     if request.method == 'GET':
@@ -63,6 +64,28 @@ def edit_post(request, id):
         except ObjectDoesNotExist:
             post_dict = {'status': 'ObjectDoesNotExist'}
     return JsonResponse(post_dict, safe=False)
+
+
+# see if the authenticator exists
+@csrf_exempt
+def check_auth(request):
+
+    # if method is POST
+    if request.method == "POST":
+
+        # get the authenticator passed in from the web layer
+        auth = request.POST['authenticator']
+
+        try:
+            profile = Authenticator.objects.get(auth=authenticator)
+            return {'status': True}
+
+        # if user not found
+        except ObjectDoesNotExist:
+            return {'status': False}
+
+    # if trying to GET
+    return HttpResponse("Error, cannot complete GET request")    
 
 
 def add_post(request):
@@ -88,6 +111,8 @@ def add_post(request):
     else:
         context = {'status': True, 'result': 'Get'}
         return JsonResponse(context)
+
+
 # registering a new user
 @csrf_exempt
 def register(request):
@@ -181,28 +206,6 @@ def create_authenticator(u_id):
     # return 
     return auth_dict
 
-
-
-# see if the authenticator exists
-@csrf_exempt
-def check_auth(authenticator):
-
-    # if method is POST
-    if request.method == "POST":
-
-        # get the authenticator passed in from the web layer
-        auth = request.POST['authenticator']
-
-        try:
-            profile = Authenticator.objects.get(auth=authenticator)
-            return {'status': True, 'result': 'Can work'}
-
-        # if user not found
-        except ObjectDoesNotExist:
-            return {'status': False, 'result': 'You must be logged in to do this'}
-
-    # if trying to GET
-    return HttpResponse("Error, cannot complete GET request")
 
 
 @csrf_exempt

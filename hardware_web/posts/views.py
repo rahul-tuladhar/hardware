@@ -27,11 +27,32 @@ def post_detail(request, id):
     context = req.json()
     return render(request, 'post_detail.html', context)
 
+
+# check to see if the user is already logged in
+def check_auth(request):
+
+    # if some cookie exists
+    if request.COOKIES.get('authenticator'):
+
+        detail = {'authenticator': request.COOKIES.get('authenticator')}
+
+        #pass encoded data to the experience layer api
+        req = requests.post('http://exp-api:8000/api/check_auth/', data=detail)
+
+        #get the return json
+        context = req.json()
+
+        return context['status']
+
+    return False;
+
+
+# add a post
 def add_post(request):
 
-    # if check_auth(request) == False:
+    if check_auth(request) == False:
 
-    #     return render(request, 'index.html', {'add_error': 'Must be logged in to do this'})
+        return render(request, 'not_auth.html')
 
     if request.method == 'POST':
 
@@ -55,12 +76,15 @@ def add_post(request):
 
             if (context['status']): # the model was successfully added
                 return HttpResponseRedirect('/home/')
+
             else:   # the model was not successfully added
                 form = AddPostForm()
                 return render(request, 'index.html', {'form': form})
+
         else: # the form was not valid
             form = AddPostForm()
             return render(request, 'index.html', {'form': form})
+
     else:   # GET request; load a blank form
         form = AddPostForm()
 
@@ -108,24 +132,6 @@ def register(request):
     # if request is GET, render the blank form
     return render(request, 'register.html', {'form': RegistrationForm()})
 
-
-# check to see if the user is already logged in
-def check_auth(request):
-
-    # if some cookie exists
-    if request.COOKIES.get('authenticator'):
-
-        detail = {'authenticator': request.COOKIES.get('authenticator')}
-
-        #pass encoded data to the experience layer api
-        req = requests.post('http://exp-api:8000/api/check_auth/', data=detail)
-
-        #get the return json
-        context = req.json()
-
-        return context['status']
-
-    return False;
 
 
 # login view

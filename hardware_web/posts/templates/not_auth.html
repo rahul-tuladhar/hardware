@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+{% extends 'base.html' %}
+{% load staticfiles %}
+{% block content %}
+    <head>
+        <meta charset="utf-8">
+        <title>Not Authenticated</title>
+    </head>
+   	<body>
+		<form action="/logout/" method="post">
+        <br> 
+   		{% csrf_token %}
+
+   			<h3> You must be logged in as a valid user to do that! </h3> <br>
+			<!--submit button -->
+			
+        <p> Try logging in? <a href="/login/">Login</a></p>
+
+		</form>
+   	</body>
+{% endblock %}

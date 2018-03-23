@@ -14,7 +14,7 @@ def home(request):
     # return
     return JsonResponse(context)
 
-  
+#details of a post  
 def post_detail(request, id):
     # get json response
     req = requests.get('http://models-api:8000/api/post_detail/' + str(id))
@@ -27,6 +27,30 @@ def post_detail(request, id):
     context = response
     return JsonResponse(context)
 
+
+#see if authenticator is in database
+@csrf_exempt
+def check_auth(request):
+
+    # if method is POST
+    if request.method == "POST":
+        # get all the details posted from web layer
+        detail = {'authenticator': request.POST['authenticator']}
+
+        # pass encoded data to the model layer api
+        req = requests.post('http://models-api:8000/api/check_auth/', data=detail)
+
+        # get the return json
+        context = req.json()
+
+        # return the JsonResponse
+        return JsonResponse(context)
+
+    # if trying to GET
+    return HttpResponse("Error, cannot complete GET request")
+
+
+# add a new post
 def add_post(request):
     if (request.method == 'POST'):
         data = {
@@ -46,6 +70,7 @@ def add_post(request):
         context = {'status': False}
         return JsonResponse(context, safe=False)
 
+#register a new user
 @csrf_exempt
 def register(request):
     # if method is POST
@@ -56,26 +81,6 @@ def register(request):
 
         # pass data to model layer api
         req = requests.post('http://models-api:8000/api/register/', data=detail)
-
-        # get the return json
-        context = req.json()
-
-        # return the JsonResponse
-        return JsonResponse(context)
-
-    # if trying to GET
-    return HttpResponse("Error, cannot complete GET request")
-
-@csrf_exempt
-def check_auth(request):
-
-    # if method is POST
-    if request.method == "POST":
-        # get all the details posted from web layer
-        detail = {'authenticator': request.POST['authenticator']}
-
-        # pass encoded data to the model layer api
-        req = requests.post('http://models-api:8000/api/check_auth/', data=detail)
 
         # get the return json
         context = req.json()
