@@ -71,10 +71,10 @@ def edit_post(request, id):
 def check_auth(request):
 
     # if method is POST
-    if request.method == "POST":
+    if request.COOKIES.get('authenticator'):
 
         # get the authenticator passed in from the web layer
-        auth = request.POST['authenticator']
+        auth = request.COOKIES.get('authenticator')
 
         try:
             Authenticator.objects.get(auth=auth)
@@ -85,7 +85,7 @@ def check_auth(request):
             return {'status': False}
 
     # if trying to GET
-    return HttpResponse("Error, cannot complete GET request")    
+    # return HttpResponse("Error, cannot complete GET request")
 
 
 def add_post(request):

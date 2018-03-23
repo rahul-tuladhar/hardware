@@ -38,14 +38,15 @@ def check_auth(request):
 
         #pass encoded data to the experience layer api
         req = requests.post('http://exp-api:8000/api/check_auth/', data=detail)
-
+        # if req:
         #get the return json
         context = req.json()
-
+        # else:
+        #     context = {'status': False}
         #return the status
         return context['status']
 
-    return False;
+    return False
 
 
 # add a post
@@ -54,7 +55,7 @@ def add_post(request):
     #check to see if user is authenticated
     if not check_auth(request):
 
-        return render(request, 'not_auth.html') 
+        return render(request, 'not_auth.html')
 
 
     if request.method == 'POST':

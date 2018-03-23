@@ -7,9 +7,10 @@
 	{% csrf_token %}
 	{% if data %}
 	  	{% for post in data %}
-		    <li>
-		     	<a href="{% url 'post_detail' post.id %}">{{post.title}}</a>
-		    </li>
+
+		     	<p>${{ post.price }} <a href="{% url 'post_detail' post.id %}">{{post.title}}</a></p>
+                <p>{{ post.description|truncatewords:50 }}</p>
+
 	  	{% endfor %}
 	{% else %}
 		<p> No posts found </p>
