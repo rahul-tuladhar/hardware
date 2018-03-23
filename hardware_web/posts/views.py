@@ -42,6 +42,7 @@ def check_auth(request):
         #get the return json
         context = req.json()
 
+        #return the status
         return context['status']
 
     return False;
@@ -50,9 +51,11 @@ def check_auth(request):
 # add a post
 def add_post(request):
 
-    if check_auth(request) == False:
+    # #check to see if user is authenticated
+    # if not check_auth(request):
 
-        return render(request, 'not_auth.html')
+    #     return render(request, 'not_auth.html') 
+
 
     if request.method == 'POST':
 
@@ -87,6 +90,7 @@ def add_post(request):
 
     else:   # GET request; load a blank form
         form = AddPostForm()
+   
 
     return render(request, 'add_post.html', {'form': form})
 
