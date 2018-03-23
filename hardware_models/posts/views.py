@@ -77,7 +77,7 @@ def check_auth(request):
         auth = request.POST['authenticator']
 
         try:
-            profile = Authenticator.objects.get(auth=authenticator)
+            Authenticator.objects.get(auth=auth)
             return {'status': True}
 
         # if user not found
