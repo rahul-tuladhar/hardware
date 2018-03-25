@@ -34,26 +34,38 @@ def post_detail(request, id):
 @csrf_exempt
 def check_auth(request):
     # if method is POST
-    if request.COOKIES.post('authenticator'):
-        # get all the details posted from web layer
-        detail = {'authenticator': request.COOKIES.get('authenticator')}
-
+    # if request.method == "POST":
+    if request.COOKIES.get('authenticator'):
         # pass encoded data to the model layer api
-        req = requests.post('http://models-api:8000/api/check_auth/', data=detail)
+        req = requests.get('http://models-api:8000/api/check_auth/', cookies = request.COOKIES)
 
         # get the return json
-        context = req.json()
-
+        if req.status_code == 200:
+            context = req.json()
+        else:
+            context = {'status': False, 'error': 'reqs raised a 500 error'}
         # return the JsonResponse
         return JsonResponse(context)
-
-    # if trying to GET
-    return HttpResponse("Error, cannot complete GET request")
+#
+    # # if trying to GET
+    # if request.method == "GET":
+    #     if request.COOKIES.get('authenticator'):
+    #         # pass encoded data to the experience layer api
+    #         req = requests.get('http://models-api:8000/api/check_auth/')
+    #         # get the return json
+    #         if req.status_code is 200:
+    #             context = req.json().decode("utf-8")
+    #         else:
+    #             context = {'status': False, 'error': 'reqs raised a 500 error'}
+    #
+    #         # return the status
+    #         return JsonResponse(context)
+    # return HttpResponse("Error, cannot complete GET request")
 
 
 # add a new post
 def add_post(request):
-    if (request.method == 'POST'):
+    if request.method == 'POST':
         data = {
             'author': request.POST.get('author'),
             'description': request.POST.get('description'),

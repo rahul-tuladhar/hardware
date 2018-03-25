@@ -69,7 +69,6 @@ def edit_post(request, id):
 # see if the authenticator exists
 @csrf_exempt
 def check_auth(request):
-
     # if method is POST
     if request.COOKIES.get('authenticator'):
 
@@ -78,15 +77,16 @@ def check_auth(request):
 
         try:
             Authenticator.objects.get(auth=auth)
-            return {'status': True}
+            context = {'status': True}
+            return JsonResponse(context)
 
         # if user not found
         except ObjectDoesNotExist:
-            return {'status': False}
-
-    # if trying to GET
-    # return HttpResponse("Error, cannot complete GET request")
-
+            context = {'status': False}
+            return JsonResponse(context)
+    else:
+        context = {'status': False, 'error':'Authenticator does not exist in cookie'}
+        return JsonResponse(context)
 
 def add_post(request):
     if (request.method =='POST'):

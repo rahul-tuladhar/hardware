@@ -6,9 +6,9 @@ from django.views.decorators.csrf import csrf_exempt
 from .forms import *
 from django.contrib.auth.hashers import make_password
 
+
 # sends GET request to the URL then returns a JsonResponse dictionary for homepage
 def home(request):
-
     req = requests.get('http://exp-api:8000/api/home/')
     response = req.json()
 
@@ -17,6 +17,7 @@ def home(request):
     }
 
     return render(request, 'index.html', context)
+
 
 # sends a GET reqeust to the URL then returns a JsonResponse for post_detail
 def post_detail(request, id):
@@ -30,35 +31,25 @@ def post_detail(request, id):
 
 # check to see if the user is already logged in
 def check_auth(request):
-
     # if some cookie exists
     if request.COOKIES.get('authenticator'):
-
-        detail = {'authenticator': request.COOKIES.get('authenticator')}
-
-        #pass encoded data to the experience layer api
-        req = requests.post('http://exp-api:8000/api/check_auth/', data=detail)
-        # if req:
-        #get the return json
+        # pass encoded data to the experience layer api
+        req = requests.get('http://exp-api:8000/api/check_auth/', cookies=request.COOKIES)
+        # get the return json
         context = req.json()
-        # else:
-        #     context = {'status': False}
-        #return the status
+        # return the status
         return context['status']
-
-    return False
+    else:
+        return {'status': False, 'error': 'Authenticator not found in cookie'}
 
 
 # add a post
 def add_post(request):
-
-    #check to see if user is authenticated
-    if not check_auth(request):
-
-        return render(request, 'not_auth.html')
-
+    # check to see if user is authenticated
 
     if request.method == 'POST':
+        if not check_auth(request):
+            return render(request, 'not_auth.html')
 
         form = AddPostForm(request.POST)
 
@@ -73,27 +64,27 @@ def add_post(request):
                 'transaction_type': form.cleaned_data['transaction_type'],
                 'title': form.cleaned_data['title'],
             }
-            req = requests.post('http://exp-api:8000/api/add_post/', data = data)
+            req = requests.post('http://exp-api:8000/api/add_post/', data=data)
             response = req.json()
 
-            context = {'status': response['status'],}
+            context = {'status': response['status']}
 
-            if (context['status']): # the model was successfully added
+            if (context['status']):  # the model was successfully added
                 return HttpResponseRedirect('/home/')
 
-            else:   # the model was not successfully added
+            else:  # the model was not successfully added
                 form = AddPostForm()
                 return render(request, 'index.html', {'form': form})
 
-        else: # the form was not valid
+        else:  # the form was not valid
             form = AddPostForm()
             return render(request, 'index.html', {'form': form})
 
-    else:   # GET request; load a blank form
+    else:  # GET request; load a blank form
         form = AddPostForm()
-   
 
     return render(request, 'add_post.html', {'form': form})
+
 
 # register a user
 @csrf_exempt
@@ -107,7 +98,7 @@ def register(request):
         # check whether the form is valid
         if form.is_valid():
 
-            #process data
+            # process data
             email = form.cleaned_data['email']
             password = form.cleaned_data['password']
             username = form.cleaned_data['username']
@@ -115,42 +106,41 @@ def register(request):
 
             detail = {'email': email, 'password': password, 'username': username, 'display_name': display_name}
 
-            #pass encoded data to the experience layer api
+            # pass encoded data to the experience layer api
             req = requests.post('http://exp-api:8000/api/register/', data=detail)
 
-            #get the return json
+            # get the return json
             context = req.json()
 
-            #error checking
+            # error checking
             if not context:
-                return render(request, 'register.html', {'error': 'Failed to register user', 'form': RegistrationForm()})
+                return render(request, 'register.html',
+                              {'error': 'Failed to register user', 'form': RegistrationForm()})
             if context['status'] != True:
                 return render(request, 'register.html', {'error': context['result'], 'form': RegistrationForm()})
 
-            #redirect to the login page after everything is done
+            # redirect to the login page after everything is done
             return HttpResponseRedirect(reverse('login'))
 
         # if form is not valid send an error
         else:
-            return render(request, 'register.html') 
+            return render(request, 'register.html')
 
-    # if request is GET, render the blank form
+            # if request is GET, render the blank form
     return render(request, 'register.html', {'form': RegistrationForm()})
-
 
 
 # login view
 @csrf_exempt
 def login(request):
-
     # if request is POST, must process data from form
     if request.method == 'POST':
 
         # see if the user is already logged in
         if request.COOKIES.get('authenticator'):
-
             # fail to login
-            return render(request, 'login.html', {'error': 'Please logout before logging in again', 'form': LoginForm()})
+            return render(request, 'login.html',
+                          {'error': 'Please logout before logging in again', 'form': LoginForm()})
 
         # create form instance and populate it with data from the request
         form = LoginForm(request.POST)
@@ -194,35 +184,33 @@ def login(request):
 # logout view
 @csrf_exempt
 def logout(request):
-
-    #if post
+    # if post
     if request.method == "POST":
 
-        #if an authenticator cookie exists
+        # if an authenticator cookie exists
         if request.COOKIES.get('authenticator'):
 
             # get the authenticator for the user
             detail = {'authenticator': request.COOKIES.get('authenticator')}
 
-            #pass encoded data to the experience layer api
+            # pass encoded data to the experience layer api
             req = requests.post('http://exp-api:8000/api/logout/', data=detail)
 
-            #get the return json
+            # get the return json
             context = req.json()
 
             # error checking
             if (not context) or (context['status'] != True):
                 return render(request, 'logout.html', {'error': context['result']})
 
-            #delete the cookie
+            # delete the cookie
             response = render(request, 'logout.html', {'result': context['result']})
-            response.delete_cookie('authenticator') 
+            response.delete_cookie('authenticator')
 
-            #go to logout screen
+            # go to logout screen
             return response
 
         return render(request, 'logout.html', {'error': 'You are not logged in'})
 
-    #if GET
+    # if GET
     return render(request, 'logout.html')
-
