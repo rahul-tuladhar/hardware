@@ -70,6 +70,7 @@ def add_post(request):
             context = {'status': response['status']}
 
             if (context['status']):  # the model was successfully added
+
                 return HttpResponseRedirect('/home/')
 
             else:  # the model was not successfully added
