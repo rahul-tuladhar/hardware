@@ -1,11 +1,10 @@
 from django.shortcuts import render
-import requests
 from django.http import HttpResponse, HttpResponseRedirect
 from django.urls import reverse
 from django.views.decorators.csrf import csrf_exempt
 from .forms import *
 from django.contrib.auth.hashers import make_password
-
+import requests
 
 # sends GET request to the URL then returns a JsonResponse dictionary for homepage
 def home(request):
@@ -45,6 +44,12 @@ def check_auth(request):
 
 # add a post
 def add_post(request):
+
+    #for getting the authenticator value for postman
+    # if check_auth(request):
+    #     context = {'authenticator': request.COOKIES.get('authenticator')}
+    #     return render(request,'auth.html', context)
+
     # check to see if user is authenticated
     if not check_auth(request):
         return render(request, 'not_auth.html')
@@ -64,12 +69,12 @@ def add_post(request):
                 'transaction_type': form.cleaned_data['transaction_type'],
                 'title': form.cleaned_data['title'],
             }
-            req = requests.post('http://exp-api:8000/api/add_post/', data=data)
+            req = requests.post('http://exp-api:8000/api/add_post/', data=data, cookies=request.COOKIES)
             response = req.json()
 
             context = {'status': response['status']}
 
-            if (context['status']):  # the model was successfully added
+            if context['status']:  # the model was successfully added
 
                 return HttpResponseRedirect('/home/')
 

@@ -90,14 +90,15 @@ def check_auth(request):
 
 
 def add_post(request):
-    if (request.method == 'POST'):
+    if request.method == 'POST':
         try:
+            # resp = check_auth(request).json()
+            # if resp['status']:
             auth = request.COOKIES.get('authenticator')
             auth_object = Authenticator.objects.get(auth=auth)
-            user_profile = Profile.objects.get(user_id=auth_object.user_id)
-            searched_author = Profile.objects.get(username=user_profile.user_name)
+            user_profile = Profile.objects.get(id=auth_object.user_id)
             new_post = Post(
-                author=searched_author,
+                author=user_profile,
                 description=request.POST.get('description'),
                 location=request.POST.get('location'),
                 part=request.POST.get('part'),
@@ -109,7 +110,7 @@ def add_post(request):
             new_post.save()
             context = {'status': True, 'result': 'Success'}
         except ObjectDoesNotExist:
-            context = {'status': False, 'result': 'Author is not valid'}
+            context = {'status': False, 'result': request.COOKIES.get('authenticator')}
 
         return JsonResponse(context)
     else:
@@ -135,8 +136,6 @@ def register(request):
                 'result': 'Password is not usable'
             }
             return JsonResponse(context)
-
-
         # create the user profile
         new_profile = Profile(display_name=display_name, email=email, password=password, username=username)
 
