@@ -7,7 +7,7 @@ models:
    volumes:
       - ./hardware_models:/app
    command: bash -c "pip install requests && python manage.py makemigrations posts && python manage.py migrate && mod_wsgi-express start-server --reload-on-changes hardware_models/wsgi.py"
-
+#  python manage.py loaddata fixtures.json &&
 exp:
    image: tp33/django
    links:

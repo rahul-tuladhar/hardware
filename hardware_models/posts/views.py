@@ -10,7 +10,6 @@ import os
 import hmac
 
 
-
 # returns the homepage of posts
 def home(request):
     all_posts_dict = {}  # result dictionary
