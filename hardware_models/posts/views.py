@@ -4,8 +4,7 @@ from django.core.exceptions import ObjectDoesNotExist
 from django.forms.models import model_to_dict
 from django.views.decorators.csrf import csrf_exempt
 from django.db import IntegrityError
-from django.contrib.auth.hashers import is_password_usable, make_password
-
+from django.contrib.auth.hashers import is_password_usable, check_password
 from hardware_models import settings
 import os
 import hmac
@@ -174,13 +173,18 @@ def login(request):
 
         # try to find the user with username
         try:
-            profile = Profile.objects.get(username=username, password=password)
-            auth = create_authenticator(profile.id)
-
-            context = {
-                'status': True,
-                'result': auth['auth']
-            }
+            profile = Profile.objects.get(username=username)
+            if check_password(password, profile.password):
+                auth = create_authenticator(profile.id)
+                context = {
+                    'status': True,
+                    'result': auth['auth']
+                }
+            else:
+                context = {
+                    'status': False,
+                    'result': 'Invalid username or username/password combination'
+                }
 
         # if user not found
         except ObjectDoesNotExist:
