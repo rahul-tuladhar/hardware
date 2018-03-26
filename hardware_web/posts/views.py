@@ -102,7 +102,8 @@ def register(request):
 
             # process data
             email = form.cleaned_data['email']
-            password = form.cleaned_data['password']
+            # password = make_password(form.cleaned_data['password'])
+            password = make_password(form.cleaned_data['password'])
             username = form.cleaned_data['username']
             display_name = form.cleaned_data['display_name']
 
@@ -112,13 +113,16 @@ def register(request):
             req = requests.post('http://exp-api:8000/api/register/', data=detail)
 
             # get the return json
+            # if req.status_code == 200:
             context = req.json()
+            # else:
+            #     context = {'status': False,'result': 'error', 'error': 'reqs raised a 500 error'}
 
             # error checking
             if not context:
                 return render(request, 'register.html',
                               {'error': 'Failed to register user', 'form': RegistrationForm()})
-            if context['status'] != True:
+            if not context['status']:
                 return render(request, 'register.html', {'error': context['result'], 'form': RegistrationForm()})
 
             # redirect to the login page after everything is done
@@ -126,7 +130,7 @@ def register(request):
 
         # if form is not valid send an error
         else:
-            return render(request, 'register.html')
+            return render(request, 'register.html', {'error': 'Not a valid form'})
 
             # if request is GET, render the blank form
     return render(request, 'register.html', {'form': RegistrationForm()})

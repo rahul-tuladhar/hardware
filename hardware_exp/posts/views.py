@@ -4,6 +4,7 @@ import requests
 from django.urls import reverse
 import requests
 from django.views.decorators.csrf import csrf_exempt
+from django.contrib.auth.hashers import is_password_usable, make_password
 
 
 # sends GET request to the URL(s) then returns a JsonResponse dictionary for homepage
@@ -37,7 +38,7 @@ def check_auth(request):
     # if request.method == "POST":
     if request.COOKIES.get('authenticator'):
         # pass encoded data to the model layer api
-        req = requests.get('http://models-api:8000/api/check_auth/', cookies = request.COOKIES)
+        req = requests.get('http://models-api:8000/api/check_auth/', cookies=request.COOKIES)
 
         # get the return json
         if req.status_code == 200:
@@ -62,7 +63,10 @@ def add_post(request):
             'title': request.POST.get('title'),
         }
         req = requests.post('http://models-api:8000/api/add_post/', data=data)
-        context = req.json()
+        if req.status_code == 200:
+            context = req.json()
+        else:
+            context = {'status': False, 'error': 'reqs raised a 500 error'}
         return JsonResponse(context, safe=False)
     else:  # GET request
         context = {'status': False}
@@ -74,18 +78,25 @@ def add_post(request):
 def register(request):
     # if method is POST
     if request.method == "POST":
-        # get all the details posted from web layer
-        detail = {'email': request.POST['email'], 'password': request.POST['password'],
-                  'username': request.POST['username'], 'display_name': request.POST['display_name']}
+        if is_password_usable(request.POST['password']):
+            # get all the details posted from web layer
+            detail = {'email': request.POST['email'], 'password': request.POST['password'],
+                      'username': request.POST['username'], 'display_name': request.POST['display_name']}
 
-        # pass data to model layer api
-        req = requests.post('http://models-api:8000/api/register/', data=detail)
+            # pass data to model layer api
+            req = requests.post('http://models-api:8000/api/register/', data=detail)
 
-        # get the return json
-        context = req.json()
+            # get the return json
+            context = req.json()
 
-        # return the JsonResponse
-        return JsonResponse(context)
+            # return the JsonResponse
+            return JsonResponse(context)
+        # else:
+        #     context = {
+        #         'status': False,
+        #         'result': 'Password is not usable'
+        #     }
+        #     return JsonResponse(context)
 
     # if trying to GET
     return HttpResponse("Error, cannot complete GET request")

@@ -4,11 +4,12 @@ from django.core.exceptions import ObjectDoesNotExist
 from django.forms.models import model_to_dict
 from django.views.decorators.csrf import csrf_exempt
 from django.db import IntegrityError
-from random import randint
+from django.contrib.auth.hashers import is_password_usable, make_password
+
 from hardware_models import settings
 import os
 import hmac
-from django.contrib.auth.hashers import make_password
+
 
 
 # returns the homepage of posts
@@ -126,8 +127,16 @@ def register(request):
         # get post details
         display_name = request.POST['display_name']
         email = request.POST['email']
-        password = request.POST['password']
         username = request.POST['username']
+        if is_password_usable(request.POST['password']):
+            password = request.POST['password']
+        else:
+            context = {
+                'status': False,
+                'result': 'Password is not usable'
+            }
+            return JsonResponse(context)
+
 
         # create the user profile
         new_profile = Profile(display_name=display_name, email=email, password=password, username=username)
