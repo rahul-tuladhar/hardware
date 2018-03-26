@@ -43,11 +43,8 @@
           <a class="btn btn-info btn-sm" href="{% url 'login' %}">Login</a> 
 {#          <a class="btn btn-info btn-sm" href="{% url 'logout' %}">Logout</a>#}
 {#          {%  if result.result is True %}#}
-              <form action="/logout/" method="post">
-
+            <form action="/logout/" method="post">
             {% csrf_token %}
-                <!--submit button -->
-
                 <button type="submit" class="btn btn-info btn-sm" id="id_logout">Logout</button>
             </form>
 {#          {% endif %}#}

@@ -46,28 +46,13 @@ def check_auth(request):
             context = {'status': False, 'error': 'reqs raised a 500 error'}
         # return the JsonResponse
         return JsonResponse(context)
-#
-    # # if trying to GET
-    # if request.method == "GET":
-    #     if request.COOKIES.get('authenticator'):
-    #         # pass encoded data to the experience layer api
-    #         req = requests.get('http://models-api:8000/api/check_auth/')
-    #         # get the return json
-    #         if req.status_code is 200:
-    #             context = req.json().decode("utf-8")
-    #         else:
-    #             context = {'status': False, 'error': 'reqs raised a 500 error'}
-    #
-    #         # return the status
-    #         return JsonResponse(context)
-    # return HttpResponse("Error, cannot complete GET request")
 
 
 # add a new post
 def add_post(request):
     if request.method == 'POST':
         data = {
-            'author': request.POST.get('author'),
+            # 'author': request.POST.get('author'),
             'description': request.POST.get('description'),
             'location': request.POST.get('location'),
             'part': request.POST.get('part'),

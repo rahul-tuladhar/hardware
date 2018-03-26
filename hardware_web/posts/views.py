@@ -38,24 +38,24 @@ def check_auth(request):
         # get the return json
         context = req.json()
         # return the status
-        return context['status']
     else:
-        return {'status': False, 'error': 'Authenticator not found in cookie'}
+        context = {'status': False, 'error': 'Authenticator not found in cookie'}
+    return context['status']
 
 
 # add a post
 def add_post(request):
     # check to see if user is authenticated
-
+    if not check_auth(request):
+        return render(request, 'not_auth.html')
     if request.method == 'POST':
-        if not check_auth(request):
-            return render(request, 'not_auth.html')
 
         form = AddPostForm(request.POST)
 
         if form.is_valid():
+
             data = {
-                'author': form.cleaned_data['author'],
+                # 'author': form.cleaned_data['author'],
                 'description': form.cleaned_data['description'],
                 'location': form.cleaned_data['location'],
                 'part': form.cleaned_data['part'],
@@ -82,6 +82,7 @@ def add_post(request):
             return render(request, 'index.html', {'form': form})
 
     else:  # GET request; load a blank form
+
         form = AddPostForm()
 
     return render(request, 'add_post.html', {'form': form})
@@ -135,6 +136,10 @@ def register(request):
 @csrf_exempt
 def login(request):
     # if request is POST, must process data from form
+    # if check_auth(request):
+    #     response = HttpResponseRedirect(reverse('home'))
+    #     return response
+
     if request.method == 'POST':
 
         # see if the user is already logged in
