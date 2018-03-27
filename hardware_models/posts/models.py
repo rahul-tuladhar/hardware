@@ -1,6 +1,6 @@
 from django.db import models
 from django.utils import timezone
-from random import randint
+
 
 class Group(models.Model):
     """ Attributes in alphabetical order. """
