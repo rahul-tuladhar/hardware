@@ -229,3 +229,17 @@ def logout(request):
 
     # if GET
     return render(request, 'logout.html')
+
+
+# TODO: Project 5: Implement weblayer service level search on Elastic search container
+def search(request):
+    context = {'status': False, 'result': 'empty Context'}
+    if request.method == "POST":
+        detail = {}
+        req = requests.post('http://exp-api:8000/api/search', data= detail)
+        context = req.json()
+
+    if request.method == "GET":
+        req = requests.get('http://exp-api:8000/api/search', cookies = request.COOKIES)
+        context = req.json()
+    return render(request, 'search_results.html', context)

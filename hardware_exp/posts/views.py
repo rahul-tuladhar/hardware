@@ -62,7 +62,7 @@ def add_post(request):
             'transaction_type': request.POST.get('transaction_type'),
             'title': request.POST.get('title'),
         }
-        req = requests.post('http://models-api:8000/api/add_post/', data=data, cookies= request.COOKIES)
+        req = requests.post('http://models-api:8000/api/add_post/', data=data, cookies=request.COOKIES)
         if req.status_code == 200:
             context = req.json()
         else:
@@ -140,3 +140,14 @@ def logout(request):
 
     # if trying to GET
     return HttpResponse("Error, cannot complete GET request")
+
+
+# TODO: Project 5: Implement experience service level search on Elastic search container
+def search(request):
+    context = {}
+    if request.method == "POST":
+        detail = {}
+        context = {'status': True, 'result': 'POST request'}
+    if request.method == "GET":
+        context = {'status': True, 'result': 'GET request'}
+    return JsonResponse(context)
