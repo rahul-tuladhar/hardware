@@ -4,13 +4,13 @@ from django.core.exceptions import ObjectDoesNotExist
 from django.forms.models import model_to_dict
 from django.views.decorators.csrf import csrf_exempt
 from django.db import IntegrityError
-from random import randint
+from django.contrib.auth.hashers import is_password_usable, check_password
 from hardware_models import settings
 import os
 import hmac
-from django.contrib.auth.hashers import make_password
 
-#returns the homepage of posts
+
+# returns the homepage of posts
 def home(request):
     all_posts_dict = {}  # result dictionary
 
@@ -37,9 +37,9 @@ def home(request):
         all_posts_dict = {'status': 'Nothing to POST'}
     return JsonResponse(all_posts_dict, safe=False)
 
+
 # returns the details of a specific post
 def post_detail(request, id):
-
     if request.method == 'GET':
         try:
             post = Post.objects.get(id=id)
@@ -53,7 +53,6 @@ def post_detail(request, id):
 
 
 def edit_post(request, id):
-
     if request.method == 'GET':
         post_dict = {'status': 'should not get request edit_post'}
     # TODO: Fully implement the entity API layer of this method
@@ -69,43 +68,48 @@ def edit_post(request, id):
 # see if the authenticator exists
 @csrf_exempt
 def check_auth(request):
-
     # if method is POST
-    if request.method == "POST":
+    if request.COOKIES.get('authenticator'):
 
         # get the authenticator passed in from the web layer
-        auth = request.POST['authenticator']
+        auth = request.COOKIES.get('authenticator')
 
         try:
             Authenticator.objects.get(auth=auth)
-            return {'status': True}
+            context = {'status': True}
+            return JsonResponse(context)
 
         # if user not found
         except ObjectDoesNotExist:
-            return {'status': False}
-
-    # if trying to GET
-    return HttpResponse("Error, cannot complete GET request")    
+            context = {'status': False}
+            return JsonResponse(context)
+    else:
+        context = {'status': False, 'error': 'Authenticator does not exist in cookie'}
+        return JsonResponse(context)
 
 
 def add_post(request):
-    if (request.method =='POST'):
-        searched_author = Profile.objects.get(username=request.POST.get('author'))
-        new_post = Post(
-            author = searched_author,
-            description = request.POST.get('description'),
-            location = request.POST.get('location'),
-            part = request.POST.get('part'),
-            payment_method = request.POST.get('payment_method'),
-            price = request.POST.get('price'),
-            transaction_type = request.POST.get('transaction_type'),
-            title = request.POST.get('title'),
-        )
+    if request.method == 'POST':
         try:
+            # resp = check_auth(request).json()
+            # if resp['status']:
+            auth = request.COOKIES.get('authenticator')
+            auth_object = Authenticator.objects.get(auth=auth)
+            user_profile = Profile.objects.get(id=auth_object.user_id)
+            new_post = Post(
+                author=user_profile,
+                description=request.POST.get('description'),
+                location=request.POST.get('location'),
+                part=request.POST.get('part'),
+                payment_method=request.POST.get('payment_method'),
+                price=request.POST.get('price'),
+                transaction_type=request.POST.get('transaction_type'),
+                title=request.POST.get('title'),
+            )
             new_post.save()
             context = {'status': True, 'result': 'Success'}
-        except:
-            context = {'status': False, 'result': 'Failed'}
+        except ObjectDoesNotExist:
+            context = {'status': False, 'result': request.COOKIES.get('authenticator')}
 
         return JsonResponse(context)
     else:
@@ -116,16 +120,21 @@ def add_post(request):
 # registering a new user
 @csrf_exempt
 def register(request):
-
     # if method is POST
     if request.method == "POST":
 
         # get post details
         display_name = request.POST['display_name']
         email = request.POST['email']
-        password = request.POST['password']
         username = request.POST['username']
-
+        if is_password_usable(request.POST['password']):
+            password = request.POST['password']
+        else:
+            context = {
+                'status': False,
+                'result': 'Password is not usable'
+            }
+            return JsonResponse(context)
         # create the user profile
         new_profile = Profile(display_name=display_name, email=email, password=password, username=username)
 
@@ -133,15 +142,15 @@ def register(request):
         try:
             new_profile.save()
             context = {
-            'status': True,
-            'result': 'User profile successfully created'
+                'status': True,
+                'result': 'User profile successfully created'
             }
 
         # if the unique username already exists
         except IntegrityError:
             context = {
-            'status': False,
-            'result': 'User already exists with that username'
+                'status': False,
+                'result': 'User already exists with that username'
             }
 
         # return the JsonResponse
@@ -153,7 +162,6 @@ def register(request):
 
 @csrf_exempt
 def login(request):
-
     # if method is POST
     if request.method == "POST":
 
@@ -163,22 +171,27 @@ def login(request):
 
         # try to find the user with username
         try:
-            profile = Profile.objects.get(username=username, password=password)
-            auth = create_authenticator(profile.id)
-
-            context = {
-                'status': True,
-                'result': auth['auth']
-            }
+            profile = Profile.objects.get(username=username)
+            if check_password(password, profile.password):
+                auth = create_authenticator(profile.id)
+                context = {
+                    'status': True,
+                    'result': auth['auth']
+                }
+            else:
+                context = {
+                    'status': False,
+                    'result': 'Invalid username or username/password combination'
+                }
 
         # if user not found
         except ObjectDoesNotExist:
             context = {
                 'status': False,
                 'result': 'Invalid username or username/password combination'
-            }  
+            }
 
-        # return the JsonResponse
+            # return the JsonResponse
         return JsonResponse(context)
 
     # if trying to GET
@@ -187,11 +200,10 @@ def login(request):
 
 # create the authenticator instance
 def create_authenticator(u_id):
-
     random_value = hmac.new(
-        key = settings.SECRET_KEY.encode('utf-8'),
-        msg = os.urandom(32),
-        digestmod = 'sha256',
+        key=settings.SECRET_KEY.encode('utf-8'),
+        msg=os.urandom(32),
+        digestmod='sha256',
     ).hexdigest()
 
     # create a new auth
@@ -207,10 +219,8 @@ def create_authenticator(u_id):
     return auth_dict
 
 
-
 @csrf_exempt
 def logout(request):
-
     # if method is POST
     if request.method == "POST":
 
@@ -233,14 +243,13 @@ def logout(request):
             context = {
                 'status': False,
                 'result': 'User is not logged in'
-            }  
+            }
 
-        # return the JsonResponse
+            # return the JsonResponse
         return JsonResponse(context)
 
     # if trying to GET
     return HttpResponse("Error, cannot complete GET request")
-
 
 # # Create your views here.
 # def user_profile(request, username=None):
@@ -267,4 +276,3 @@ def logout(request):
 
 #     del x['affiliations']
 #     return JsonResponse(x, safe=False)
-

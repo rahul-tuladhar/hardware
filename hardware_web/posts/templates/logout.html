@@ -7,19 +7,25 @@
         <title>Logout</title>
     </head>
    	<body>
-		<form action="/logout/" method="post">
-        <br> 
-   		{% csrf_token %}
-
-   			<h3> Logout Here </h3> <br>
-			<!--submit button -->
-			<button type="submit" class="btn btn-info btn-lsm" id="id_logout">Logout</button>
-			{% if error %}
+{#		<form action="/logout/" method="post">#}
+{#        <br> #}
+{#   		{% csrf_token %}#}
+{##}
+{#   			<h3> Logout Here </h3> <br>#}
+{#			<!--submit button -->#}
+{#			<button type="submit" class="btn btn-info btn-lsm" id="id_logout">Logout</button>#}
+{#			{% if error %}#}
+{#				{{error}}#}
+{#			{% endif %}#}
+{#   			{% if result %}#}
+{#				{{result}}#}
+{#			{% endif %}#}
+{#		</form>#}
+            {% if error %}
 				{{error}}
 			{% endif %}
    			{% if result %}
 				{{result}}
 			{% endif %}
-		</form>
    	</body>
 {% endblock %}

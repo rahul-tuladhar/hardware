@@ -1,6 +1,6 @@
 from django.db import models
 from django.utils import timezone
-from random import randint
+
 
 class Group(models.Model):
     """ Attributes in alphabetical order. """
@@ -17,7 +17,7 @@ class Profile(models.Model):
     # affiliations = models.ManyToManyField(Group)
     display_name = models.CharField(max_length=24)
     email = models.EmailField(max_length=254)
-    password = models.CharField(max_length=50)
+    password = models.CharField(max_length=100)
     username = models.CharField(max_length=24, default='N/A', unique=True)
 
     def __str__(self):

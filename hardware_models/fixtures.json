@@ -1,0 +1,105 @@
+[
+  {
+    "model": "posts.profile",
+     "pk": 1,
+     "fields": {
+      "display_name": "rahultuladhar",
+       "email": "rt4hc@virginia.edu",
+       "password": "pbkdf2_sha256$30000$gNjxXZtAbVav$/l6n0z8v54JGzhxT+SndFnsMkASlP/CViUXKIdlMDxg=",
+       "username": "rahul"
+    }
+  },
+   {
+    "model": "posts.profile",
+     "pk": 2,
+     "fields": {
+      "display_name": "jasondeng",
+       "email": "jason@virginia.edu",
+       "password": "pbkdf2_sha256$30000$zS8DsxrjaYeP$JoMBxGz+0VRc7QL71YpKF/Rewdi3MkK40WobRo4kXv4=",
+       "username": "jason"
+    }
+  },
+   {
+    "model": "posts.post",
+     "pk": 1,
+     "fields": {
+      "author": 1,
+       "date": "2018-03-27T03:14:37.303Z",
+       "description": "15-inch laptop ideal for gamers. Featuring the latest Intel",
+       "location": "Charlottesville",
+       "part": "Laptop",
+       "payment_method": "Cash",
+       "price": 799.0,
+       "transaction_type": "Selling",
+       "title": "Inspiron 15 7000 Gaming"
+    }
+  },
+   {
+    "model": "posts.post",
+     "pk": 2,
+     "fields": {
+      "author": 1,
+       "date": "2018-03-27T03:15:25.932Z",
+       "description": "(BX80677I77700K)",
+       "location": "Charlottesville",
+       "part": "CPU",
+       "payment_method": "Paypal",
+       "price": 349.0,
+       "transaction_type": "Selling",
+       "title": "Intel 7th Gen Intel Core Desktop Processor i7-7700"
+    }
+  },
+   {
+    "model": "posts.post",
+     "pk": 3,
+     "fields": {
+      "author": 1,
+       "date": "2018-03-27T03:16:07.726Z",
+       "description": "Tempered glass side panel / Steel / ABS Plastic ATX Mid Tower\r\n    2 x USB 3.0 / 2 x USB 2.0 / 1 x Audio & Mic / HDMI with VR Support Front Ports\r\n    2 + 1 Internal 3.5\" Drive Bays",
+       "location": "Virginia Beach",
+       "part": "Computer Case",
+       "payment_method": "Cash",
+       "price": 100.0,
+       "transaction_type": "Buying",
+       "title": "NZXT S340 Elite Matte White Steel/Tempered Glass A"
+    }
+  },
+   {
+    "model": "posts.post",
+     "pk": 4,
+     "fields": {
+      "author": 1,
+       "date": "2018-03-27T03:16:58.919Z",
+       "description": "Product Details\r\n\r\n    Device Type: LED-backlit LCD monitor - 25\"\r\n    Built-in Devices: USB 3.0 hub\r\n    Panel Type: IPS",
+       "location": "Charlottesville",
+       "part": "Monitor",
+       "payment_method": "Cash",
+       "price": 309.0,
+       "transaction_type": "Selling",
+       "title": "Dell UltraSharp UP2516D LED Monitor 25\""
+    }
+  },
+   {
+    "model": "posts.post",
+     "pk": 5,
+     "fields": {
+      "author": 1,
+       "date": "2018-03-27T03:17:47.574Z",
+       "description": "Micron MTFDDAK2T0TBN-1AR1ZABYY 2TB Micron 3D TLC NAND Flash",
+       "location": "Charlottesville",
+       "part": "SSD",
+       "payment_method": "Cash",
+       "price": 325.0,
+       "transaction_type": "Buying",
+       "title": "Micron 1100 2TB SATA 6Gb/s 2.5-inch"
+    }
+  },
+   {
+    "model": "posts.authenticator",
+     "pk": "38eae00e0217350b855c605679634f9ba8599554c08f011a6ad221936b865263",
+     "fields": {
+      "date_created": "2018-03-27T03:14:04.715Z",
+       "user_id": 1
+    }
+  }
+]
