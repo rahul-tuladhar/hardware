@@ -1,10 +1,10 @@
-from django.shortcuts import render
 from django.http import JsonResponse, HttpResponse
-import requests
-from django.urls import reverse
-import requests
+
 from django.views.decorators.csrf import csrf_exempt
-from django.contrib.auth.hashers import is_password_usable, make_password
+from django.contrib.auth.hashers import is_password_usable
+from kafka import KafkaProducer
+import requests
+import json
 
 
 # sends GET request to the URL(s) then returns a JsonResponse dictionary for homepage
@@ -63,6 +63,7 @@ def add_post(request):
             'title': request.POST.get('title'),
         }
         req = requests.post('http://models-api:8000/api/add_post/', data=data, cookies=request.COOKIES)
+        send_post(JsonResponse(data))
         if req.status_code == 200:
             context = req.json()
         else:
@@ -140,6 +141,18 @@ def logout(request):
 
     # if trying to GET
     return HttpResponse("Error, cannot complete GET request")
+
+
+def send_post(post):
+    """
+    Inserts object into a Kafka queue
+    :param post: JsonResponse object
+    :return: JsonResponse Object
+    """
+    producer = KafkaProducer(bootstrap_servers='kafka:9092')
+    producer.send('new-listings-topic', post)
+    # context = {'status': True, 'result': 'Post sent to Kafka queue'}
+    # return JsonResponse(context)
 
 
 # TODO: Project 5: Implement experience service level search on Elastic search container

@@ -54,11 +54,8 @@ def add_post(request):
     if not check_auth(request):
         return render(request, 'not_auth.html')
     if request.method == 'POST':
-
         form = AddPostForm(request.POST)
-
         if form.is_valid():
-
             data = {
                 # 'author': form.cleaned_data['author'],
                 'description': form.cleaned_data['description'],
@@ -71,14 +68,14 @@ def add_post(request):
             }
             req = requests.post('http://exp-api:8000/api/add_post/', data=data, cookies=request.COOKIES)
             response = req.json()
-
             context = {'status': response['status']}
 
             if context['status']:  # the model was successfully added
-
+                # TODO: Add a add post confirmation page
                 return HttpResponseRedirect('/home/')
 
             else:  # the model was not successfully added
+                # TODO: Add message to page
                 form = AddPostForm()
                 return render(request, 'index.html', {'form': form})
 
@@ -87,9 +84,7 @@ def add_post(request):
             return render(request, 'index.html', {'form': form})
 
     else:  # GET request; load a blank form
-
         form = AddPostForm()
-
     return render(request, 'add_post.html', {'form': form})
 
 
@@ -236,7 +231,7 @@ def search(request):
     context = {'status': False, 'result': 'empty Context'}
     if request.method == "POST":
         detail = {}
-        req = requests.post('http://exp-api:8000/api/search', data= detail)
+        req = requests.post('http://exp-api:8000/api/search', data=detail)
         context = req.json()
 
     if request.method == "GET":
