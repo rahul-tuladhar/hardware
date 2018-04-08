@@ -1,3 +1,17 @@
+kafka:
+   image: spotify/kafka
+   container_name: kafka
+   environment:
+      ADVERTISED_HOST: kafka
+      ADVERTISED_PORT: 9092
+   hostname: kafka
+
+es:
+   image: elasticsearch:2.0
+   container_name: es
+   ports:
+      - "9200:9200"
+
 models:
    image: tp33/django
    external_links:
@@ -6,12 +20,14 @@ models:
       - "8001:8000"
    volumes:
       - ./hardware_models:/app
-   command: bash -c "pip install requests && python manage.py makemigrations posts && python manage.py migrate && python manage.py loaddata fixtures.json && mod_wsgi-express start-server --reload-on-changes hardware_models/wsgi.py"
+   command: bash -c "pip install requests && python manage.py makemigrations posts && python manage.py migrate && mod_wsgi-express start-server --reload-on-changes hardware_models/wsgi.py"
 #  python manage.py loaddata fixtures.json &&
 exp:
    image: tp33/django
    links:
       - models:models-api
+      - kafka:kafka
+      - es:es
    ports:
       - "8002:8000"
    volumes:
@@ -27,3 +43,12 @@ web:
    volumes:
       - ./hardware_web:/app
    command: bash -c "pip install requests && mod_wsgi-express start-server --reload-on-changes hardware_web/wsgi.py"
+
+
+batch:
+   image: tp33/django
+   container_name: batch
+   links:
+      - kafka:kafka
+      - es:es
+   # command: <run a python script that pulls messages from Kafka and indexs that in ES>
