@@ -51,10 +51,10 @@ def check_auth(request):
 # add a post
 def add_post(request):
 
-    #check to see if user is authenticated
-    if not check_auth(request):
+    # #check to see if user is authenticated
+    # if not check_auth(request):
 
-        return render(request, 'not_auth.html') 
+    #     return render(request, 'not_auth.html') 
 
 
     if request.method == 'POST':
