@@ -243,3 +243,8 @@ def search(request):
         req = requests.get('http://exp-api:8000/api/search', cookies = request.COOKIES)
         context = req.json()
     return render(request, 'search_results.html', context)
+
+
+
+
+    
