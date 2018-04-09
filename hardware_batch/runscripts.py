@@ -11,10 +11,12 @@ while True:
     print('yes')
 
     # es.indices.refresh(index="listing_index")
-    # try:
-    #     for message in consumer:
-    #         new_consumer = json.loads(message).decode('utf-8')
-    #         es.index(index='listing_index', doc_type='listing', id=message['id'], body=message)
-    #         es.indices.refresh(index="listing_index")
-    # except RuntimeError:
-    #     print('what the')
+    try:
+        for message in consumer:
+            new_consumer = json.loads(message).decode('utf-8')
+            # print(new_consumer)
+            # print(json.loads((message.value).decode('utf-8')))
+            es.index(index='listing_index', doc_type='listing', id=new_consumer['result']['id'], body=new_consumer['result'])
+            es.indices.refresh(index="listing_index")
+    except RuntimeError:
+        print('what the')

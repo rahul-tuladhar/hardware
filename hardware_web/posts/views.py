@@ -7,6 +7,7 @@ from django.contrib.auth.hashers import make_password
 import requests
 import json
 
+
 # sends GET request to the URL then returns a JsonResponse dictionary for homepage
 def home(request):
     req = requests.get('http://exp-api:8000/api/home/')
@@ -24,7 +25,7 @@ def search_posts(request):
     context = {}
     if req.status_code == 200:
         search_response = req.json()
-        search_hit_list = search_response['hits']['hits'] # list of search result hits
+        search_hit_list = search_response['hits']['hits']  # list of search result hits
         posts = {}
         for d in search_hit_list:
             posts[d['_id']] = d['_source']
@@ -60,8 +61,7 @@ def check_auth(request):
 
 # add a post
 def add_post(request):
-
-    #for getting the authenticator value for postman
+    # for getting the authenticator value for postman
     # if check_auth(request):
     #     context = {'authenticator': request.COOKIES.get('authenticator')}
     #     return render(request,'auth.html', context)
@@ -251,6 +251,6 @@ def search(request):
         context = req.json()
 
     if request.method == "GET":
-        req = requests.get('http://exp-api:8000/api/search', cookies = request.COOKIES)
+        req = requests.get('http://exp-api:8000/api/search', cookies=request.COOKIES)
         context = req.json()
     return render(request, 'search_results.html', context)
