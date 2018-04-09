@@ -55,7 +55,7 @@ def add_post(request):
             'title': request.POST.get('title'),
         }
         req = requests.post('http://models-api:8000/api/add_post/', data=data, cookies=request.COOKIES)
-        send_post(req['result'])
+        send_post(req)
         if req.status_code == 200:
             context = req.json()
         else:
