@@ -5,6 +5,9 @@ from django.urls import reverse
 import requests
 from django.views.decorators.csrf import csrf_exempt
 from django.contrib.auth.hashers import is_password_usable, make_password
+from elasticsearch import Elasticsearch
+from kafka import KafkaProducer
+import json
 
 
 # sends GET request to the URL(s) then returns a JsonResponse dictionary for homepage
@@ -13,9 +16,13 @@ def home(request):
     req = requests.get('http://models-api:8000/api/home/')
     context = req.json()
 
-    # return
     return JsonResponse(context)
 
+
+def search_posts(request):
+    es = Elasticsearch(['es'])
+    resp = es.search(index='listing_index', body={'query': {'query_string': {'query': request.GET.get('title')}}, 'size': 10})
+    return JsonResponse(resp)
 
 # details of a post
 def post_detail(request, id):

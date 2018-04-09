@@ -1,11 +1,13 @@
 from .models import Profile, Post, Authenticator
 from django.http import JsonResponse, HttpResponse
+from django.core import serializers
 from django.core.exceptions import ObjectDoesNotExist
 from django.forms.models import model_to_dict
 from django.views.decorators.csrf import csrf_exempt
 from django.db import IntegrityError
 from django.contrib.auth.hashers import is_password_usable, check_password
 from hardware_models import settings
+from .filters import *
 import os
 import hmac
 
@@ -36,7 +38,6 @@ def home(request):
         all_posts = Post.objects.all().values()
         all_posts_dict = {'status': 'Nothing to POST'}
     return JsonResponse(all_posts_dict, safe=False)
-
 
 # returns the details of a specific post
 def post_detail(request, id):
@@ -215,7 +216,7 @@ def create_authenticator(u_id):
     # turn into dictionary
     auth_dict = model_to_dict(new_auth)
 
-    # return 
+    # return
     return auth_dict
 
 

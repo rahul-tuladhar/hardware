@@ -5,6 +5,7 @@ from django.views.decorators.csrf import csrf_exempt
 from .forms import *
 from django.contrib.auth.hashers import make_password
 import requests
+import json
 
 # sends GET request to the URL then returns a JsonResponse dictionary for homepage
 def home(request):
@@ -16,6 +17,12 @@ def home(request):
     }
 
     return render(request, 'index.html', context)
+
+
+def search_posts(request):
+    req = requests.get('http://exp-api:8000/api/search' + '?title=e')
+    context = req.json()
+    return render(request, 'search.html', context)
 
 
 # sends a GET reqeust to the URL then returns a JsonResponse for post_detail
@@ -185,7 +192,7 @@ def login(request):
             response = HttpResponseRedirect(reverse('home'))
             response.set_cookie('authenticator', context['result'])
 
-            # return response 
+            # return response
             return response
 
         # if form is not valid send an error
