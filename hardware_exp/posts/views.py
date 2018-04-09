@@ -75,8 +75,8 @@ def add_post(request):
             producer = KafkaProducer(bootstrap_servers='kafka:9092')
             producer.send('new-listings-topic', json.dumps(context).encode('utf-8'))
             # TODO: implemented indexing here until we fix batch container
-            es = Elasticsearch(['es'])
-            es.index(index='listing_index', doc_type='listing', id=context['result']['id'], body=context['result'])
+            # es = Elasticsearch(['es'])
+            # es.index(index='listing_index', doc_type='listing', id=context['result']['id'], body=context['result'])
         else:
             context = {'status': False, 'error': 'reqs raised a 500 error'}
         return JsonResponse(context, safe=False)
