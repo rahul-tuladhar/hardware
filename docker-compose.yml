@@ -20,6 +20,7 @@ batch:
       - es:es
    volumes:
       - ./hardware_batch:/app
+      - ./hardware_models/fixture:/app/fixture
    command: bash -c "python /app/runscripts.py"
 
 models:
@@ -30,7 +31,7 @@ models:
       - "8001:8000"
    volumes:
       - ./hardware_models:/app
-   command: bash -c "pip install requests && pip install django-filter && pip install django-widget-tweaks && python manage.py makemigrations posts && python manage.py migrate && mod_wsgi-express start-server --reload-on-changes hardware_models/wsgi.py"
+   command: bash -c "pip install requests && pip install django-filter && pip install django-widget-tweaks && python manage.py makemigrations posts && python manage.py migrate && python manage.py loaddata /app/fixture/fixtures.json && mod_wsgi-express start-server --reload-on-changes hardware_models/wsgi.py"
 
 
 exp:
