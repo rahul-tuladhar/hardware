@@ -1,8 +1,12 @@
+from django.shortcuts import render
 from django.http import JsonResponse, HttpResponse
-from django.views.decorators.csrf import csrf_exempt
-from django.contrib.auth.hashers import is_password_usable
-from kafka import KafkaProducer
 import requests
+from django.urls import reverse
+import requests
+from django.views.decorators.csrf import csrf_exempt
+from django.contrib.auth.hashers import is_password_usable, make_password
+from elasticsearch import Elasticsearch
+from kafka import KafkaProducer
 import json
 
 
@@ -12,15 +16,25 @@ def home(request):
     req = requests.get('http://models-api:8000/api/home/')
     context = req.json()
 
-    # return
     return JsonResponse(context)
 
+
+def search_posts(request):
+    es = Elasticsearch(['es'])
+    resp = es.search(index='listing_index', body={'query': {'query_string': {'query': request.GET.get('title')}}, 'size': 10})
+    return JsonResponse(resp)
 
 # details of a post
 def post_detail(request, id):
     # get json response
     req = requests.get('http://models-api:8000/api/post_detail/' + str(id))
     context = req.json()
+
+    # get json response
+    req = requests.get('http://models-api:8000/api/post_detail/' + str(id))
+    response = req.json()
+
+    context = response
     return JsonResponse(context)
 
 
@@ -46,6 +60,7 @@ def check_auth(request):
 def add_post(request):
     if request.method == 'POST':
         data = {
+            # 'author': request.POST.get('author'),
             'description': request.POST.get('description'),
             'location': request.POST.get('location'),
             'part': request.POST.get('part'),
@@ -54,8 +69,7 @@ def add_post(request):
             'transaction_type': request.POST.get('transaction_type'),
             'title': request.POST.get('title'),
         }
-        req = requests.post('http://models-api:8000/api/add_post/', data=data, cookies=request.COOKIES)
-        send_post(req)
+        req = requests.post('http://models-api:8000/api/add_post/', data=data, cookies= request.COOKIES)
         if req.status_code == 200:
             context = req.json()
         else:
@@ -65,16 +79,6 @@ def add_post(request):
         context = {'status': False}
         return JsonResponse(context, safe=False)
 
-def send_post(post):
-    """
-    Inserts object into a Kafka queue
-    :param post: JsonResponse object
-    :return: None
-    """
-    producer = KafkaProducer(bootstrap_servers='kafka:9092')
-    producer.send('new-listings-topic', json.dumps(post).encode('utf-8'))
-    # context = {'status': True, 'result': 'Post sent to Kafka queue'}
-    # return JsonResponse(context)
 
 # register a new user
 @csrf_exempt
@@ -143,15 +147,3 @@ def logout(request):
 
     # if trying to GET
     return HttpResponse("Error, cannot complete GET request")
-
-
-
-# TODO: Project 5: Implement experience service level search on Elastic search container
-def search(request):
-    context = {}
-    if request.method == "POST":
-        detail = {}
-        context = {'status': True, 'result': 'POST request'}
-    if request.method == "GET":
-        context = {'status': True, 'result': 'GET request'}
-    return JsonResponse(context)

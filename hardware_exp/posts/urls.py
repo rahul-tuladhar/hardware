@@ -9,5 +9,5 @@ urlpatterns = [
     url(r'^login/$', login, name='login'),
     url(r'^logout/$', logout, name='logout'),
     url(r'^check_auth/$', check_auth, name='check_auth'),
-    url(r'^search/$', search, name='search')
+    url(r'^search/$', search_posts, name='search'),
 ]
