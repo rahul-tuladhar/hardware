@@ -33,6 +33,7 @@ def home(request):
             response = {'status': False, 'result': all_posts_dict}
             # return json object with failure message
             return JsonResponse(response, safe=False)
+
     # if attempting to save data to DB
     if request.method == 'POST':
         all_posts = Post.objects.all().values()
@@ -52,7 +53,7 @@ def post_detail(request, id):
         post_dict = {'status': 'nothing to POST, only viewing a post detail'}
     return JsonResponse(post_dict, safe=False)
 
-
+# not implemented
 def edit_post(request, id):
     if request.method == 'GET':
         post_dict = {'status': 'should not get request edit_post'}
@@ -69,24 +70,29 @@ def edit_post(request, id):
 # see if the authenticator exists
 @csrf_exempt
 def check_auth(request):
-    # if method is POST
-    if request.COOKIES.get('authenticator'):
+    if request.method == "POST":
 
-        # get the authenticator passed in from the web layer
-        auth = request.COOKIES.get('authenticator')
+        # if method is POST
+        if request.COOKIES.get('authenticator'):
 
-        try:
-            Authenticator.objects.get(auth=auth)
-            context = {'status': True}
+            # get the authenticator passed in from the web layer
+            auth = request.COOKIES.get('authenticator')
+
+            try:
+                Authenticator.objects.get(auth=auth)
+                context = {'status': True}
+                return JsonResponse(context)
+
+            # if user not found
+            except ObjectDoesNotExist:
+                context = {'status': False}
+                return JsonResponse(context)
+        else:
+            context = {'status': False, 'error': 'Authenticator does not exist in cookie'}
             return JsonResponse(context)
 
-        # if user not found
-        except ObjectDoesNotExist:
-            context = {'status': False}
-            return JsonResponse(context)
-    else:
-        context = {'status': False, 'error': 'Authenticator does not exist in cookie'}
-        return JsonResponse(context)
+    # if trying to GET
+    return HttpResponse("Error, cannot complete GET request")
 
 
 def add_post(request):
