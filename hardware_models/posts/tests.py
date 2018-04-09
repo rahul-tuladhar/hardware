@@ -81,6 +81,7 @@ class HomepageTestCase(TestCase):
         )
 
 
+
 #post_detail view
 class DetailTestCase(TestCase):
 
@@ -157,6 +158,8 @@ class DetailTestCase(TestCase):
         )
 
 
+
+
 #check_auth view
 class CheckAuthTestCase(TestCase):
 
@@ -219,92 +222,204 @@ class CheckAuthTestCase(TestCase):
 
 
 
-# #add_post view
-# class AddPostTestCase(TestCase):
+#add_post view
+class AddPostTestCase(TestCase):
 
-#     c = Client()
+    #get when logged out
+    def test_add_get_out(self):
 
-#     #get request
-#     response = c.get('/api/home/')
-#     self.assertJSONEqual(
-#         str(response.content, encoding='utf8'),
-#         {'result': {}, 'status': True}
-#     )
+        c = Client()
 
-#     #post request 
-#     response = c.post('/api/home/')
-#     self.assertJSONEqual(
-#         str(response.content, encoding='utf8'),
-#         {'status': 'Nothing to POST'}
-#     )
+        response = c.get('/api/add_post/')
+
+        self.assertEqual(response.status_code, 200)
+        self.assertJSONEqual(
+            str(response.content, encoding='utf8'),
+            {'status': True, 'result': 'Get'}
+        )
+
+
+    #post when logged out
+    def test_add_post_out(self):
+
+        c = Client()
+
+        response = c.post('/api/add_post/')
+        
+
+
+    #setup to be logged in 
+
+
+    #get when logged in
+    def test_add_get_in(self):
+
+        c = Client()
+
+        response = c.get('/api/add_post/')
+
+        self.assertEqual(response.status_code, 200)
+        self.assertJSONEqual(
+            str(response.content, encoding='utf8'),
+            {'status': True, 'result': 'Get'}
+        )
+
+
+    #post when logged in
+    def test_add_post_in(self):
+
+        c = Client()
+
+        response = c.post('/api/add_post/')
+
+
 
 
 # #register view
-# class RegisterTestCase(TestCase):
+class RegisterTestCase(TestCase):
+
+    #get when not registered
+    def test_register_get_notregistered(self):
+
+        c = Client()
+
+        response = c.get('/api/register/')
+
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.content.decode('utf-8'), "Error, cannot complete GET request")
+
+    #post when not registered
+    def test_register_post_notregistered(self):
+        
+        c = Client()
+
+        # response = c.post('/api/register/')
+
+
+    # #setup to register user
+    # def setup(self):
 
 
 
-# #login view
-# class LoginTestCase(TestCase):
+    #get when registered
+    def test_register_get_registered(self):
+
+        c = Client()
+
+        response = c.get('/api/register/')
+
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.content.decode('utf-8'), "Error, cannot complete GET request")
+
+    #post when registered
+    def test_register_post_registered(self):
+
+        c = Client()
+
+        # response = c.post('/api/register/')
 
 
 
-# #create_authenticator view
-# class CreateAuthTestCase(TestCase):
+#login view
+class LoginTestCase(TestCase):
+
+    #get when logged out
+    def test_login_get_logged_out(self):
+
+        c = Client()
+
+        response = c.get('/api/login/')
+
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.content.decode('utf-8'), "Error, cannot complete GET request")
+
+    #post when logged out
+    def test_login_post_logged_out(self):
+
+        c = Client()
+
+        # response = c.post('/api/login/')
+
+    # #setup to be logged in
+    # def setup(self):
+
+
+    #get when logged in
+    def test_login_get_logged_out(self):
+
+        c = Client()
+
+        response = c.get('/api/login/')
+
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.content.decode('utf-8'), "Error, cannot complete GET request")
+
+    #post when logged out
+    def test_login_post_logged_out(self):
+
+        c = Client()
+
+        # response = c.post('/api/login/')
+
 
 
 
 # #logout view
-# class LogoutTestCase(TestCase):
+class LogoutTestCase(TestCase):
 
-#     #get when logged out
-#     def test_logout_get_logged_out(self):
+    #get when logged out
+    def test_logout_get_logged_out(self):
 
-#         c = Client()
+        c = Client()
 
-#         response = c.get('/api/logout/')
+        response = c.get('/api/logout/')
 
-#         self.assertEqual(response.status_code, 200)
-#         self.assertEqual(response.content, "Error, cannot complete GET request")
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.content.decode('utf-8'), "Error, cannot complete GET request")
 
-#     #post when logged out
-#     def test_logout_post_logged_out(self):
+    #post when logged out
+    def test_logout_post_logged_out(self):
 
-#         c = Client()
+        c = Client()
 
-#         response = c.post('/api/logout/')
+        # response = c.post('/api/logout/')
 
-#         self.assertEqual(response.status_code, 200)
-#         self.assertJSONEqual(
-#             str(response.content, encoding='utf8'),
-#             {'status': False, 'result': 'User is not logged in'}
-#         )
+        # self.assertEqual(response.status_code, 200)
+        # self.assertJSONEqual(
+        #     str(response.content, encoding='utf8'),
+        #     {'status': False, 'result': 'User is not logged in'}
+        # )
 
-#     #setup logging in 
-#     def setUp(self):
+    # #setup logging in 
+    def setUp(self):
 
-#         c = Client()
+        a = Authenticator(
+            auth = 'test',
+            date_created = '2018-03-26T01:03:13.178Z',
+            user_id = 1)
+        a.save()
 
+    #get when logged in
+    def test_logout_get_logged_in(self):
 
+        c = Client()
 
+        response = c.get('/api/logout/')
 
-#     #get when logged in
-#     def test_logout_get_logged_in(self):
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.content.decode('utf-8'), "Error, cannot complete GET request")
 
-#         response = c.get('/api/logout/')
+    #post when logged in
+    def test_logout_post_logged_in(self):
 
-#         self.assertEqual(response.status_code, 200)
-#         self.assertEqual(response.content, "Error, cannot complete GET request")
+        c = Client()
 
-#     #post when logged in
-#     def test_logout_post_logged_in(self):
+        # response = c.post('/api/logout/')
 
-#         response = c.post('/api/logout/')
-
-#         self.assertEqual(response.status_code, 200)
-#         self.assertJSONEqual(
-#             str(response.content, encoding='utf8'), 
-#             {'status': True, 'result': 'You have successfully logged out'}
-#         )
+        # self.assertEqual(response.status_code, 200)
+        # self.assertJSONEqual(
+        #     str(response.content, encoding='utf8'), 
+        #     {'status': True, 'result': 'You have successfully logged out'}
+        # )
 
 
