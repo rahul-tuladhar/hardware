@@ -3,36 +3,37 @@
 {% load widget_tweaks %}
 
 {% block content %}
-  <form method="get">
-    <div class="well">
-      <h4 style="margin-top: 0">Filter</h4>
-      <div class="row">
-        <div class="form-group col-sm-4 col-md-3">
-          {{ filter.form.title.label_tag }}
-          {% render_field filter.form.first_name class="form-control" %}
-        </div>
-
-      </div>
-      <button type="submit" class="btn btn-primary">
-        <span class="glyphicon glyphicon-search"></span> Search
-      </button>
-    </div>
-  </form>
+{#  <form method="get">#}
+{#    <div class="well">#}
+{#      <h4 style="margin-top: 0">Filter</h4>#}
+{#      <div class="row">#}
+{#        <div class="form-group col-sm-4 col-md-3">#}
+{#          {{ filter.form.title.label_tag }}#}
+{#          {% render_field filter.form.first_name class="form-control" %}#}
+{#        </div>#}
+{##}
+{#      </div>#}
+{#      <button type="submit" class="btn btn-primary">#}
+{#        <span class="glyphicon glyphicon-search"></span> Search#}
+{#      </button>#}
+{#    </div>#}
+{#  </form>#}
 
   <table id="results" class="tablesorter table table-striped">
     <thead>
       <tr>
-        <th>Title</th>
+        <th>Search Results</th>
       </tr>
     </thead>
     <tbody>
-      {% for post in posts_list %}
+      {{ result }}
+      {% for post_id, post_value in posts.items %}
         <tr class="result">
-          <td>{{ post.title }}</td>
+          <td><a href="{% url 'post_detail' post_value.id %}">{{post_value.title}}</a></td>
         </tr>
       {% empty %}
         <tr>
-          <td colspan="5">No data</td>
+          <td colspan="5">No results</td>
         </tr>
       {% endfor %}
     </tbody>

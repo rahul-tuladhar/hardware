@@ -12,6 +12,16 @@ es:
    ports:
       - "9200:9200"
 
+batch:
+   image: tp33/django
+   container_name: batch
+   links:
+      - kafka:kafka
+      - es:es
+   volumes:
+      - ./hardware_batch:/app
+   command: bash -c "python runscripts.py"
+
 models:
    image: tp33/django
    external_links:
@@ -46,13 +56,5 @@ web:
    command: bash -c "pip install requests && pip install django-filter && pip install django-widget-tweaks &&  mod_wsgi-express start-server --reload-on-changes hardware_web/wsgi.py"
 
 
-batch:
-   image: tp33/django
-   container_name: batch
-   links:
-      - kafka:kafka
-      - es:es
-   volumes:
-      - ./:/app
-   command: bash -c "python runscripts.py"
+
    # command: <run a python script that pulls messages from Kafka and indexs that in ES>

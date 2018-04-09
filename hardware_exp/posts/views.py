@@ -1,14 +1,10 @@
-from django.shortcuts import render
 from django.http import JsonResponse, HttpResponse
-import requests
-from django.urls import reverse
-import requests
 from django.views.decorators.csrf import csrf_exempt
-from django.contrib.auth.hashers import is_password_usable, make_password
+from django.contrib.auth.hashers import is_password_usable
 from elasticsearch import Elasticsearch
 from kafka import KafkaProducer
 import json
-
+import requests
 
 # sends GET request to the URL(s) then returns a JsonResponse dictionary for homepage
 def home(request):
@@ -21,7 +17,7 @@ def home(request):
 
 def search_posts(request):
     es = Elasticsearch(['es'])
-    resp = es.search(index='listing_index', body={'query': {'query_string': {'query': request.GET.get('title')}}, 'size': 10})
+    resp = es.search(index='listing_index', body={'query': {'query_string': {'query': request.GET.get('q')}}, 'size': 10})
     return JsonResponse(resp)
 
 # details of a post
@@ -58,6 +54,7 @@ def check_auth(request):
 
 # add a new post
 def add_post(request):
+
     if request.method == 'POST':
         data = {
             # 'author': request.POST.get('author'),
@@ -69,9 +66,16 @@ def add_post(request):
             'transaction_type': request.POST.get('transaction_type'),
             'title': request.POST.get('title'),
         }
-        req = requests.post('http://models-api:8000/api/add_post/', data=data, cookies= request.COOKIES)
+        # Sends the post data to the
+        req = requests.post('http://models-api:8000/api/add_post/', data=data, cookies=request.COOKIES)
         if req.status_code == 200:
+            es = Elasticsearch(['es'])
             context = req.json()
+            producer = KafkaProducer(bootstrap_servers='kafka:9092')
+            producer.send('new-listings-topic', json.dumps(context).encode('utf-8'))
+            # for i in range(0, 100):
+            #     message = {'id': i, 'result': 'this is ' + str(i)}
+            es.index(index='listing_index', doc_type='listing', id=context['result']['id'], body=context['result'])
         else:
             context = {'status': False, 'error': 'reqs raised a 500 error'}
         return JsonResponse(context, safe=False)

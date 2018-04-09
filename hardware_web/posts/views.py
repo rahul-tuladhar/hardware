@@ -20,8 +20,17 @@ def home(request):
 
 
 def search_posts(request):
-    req = requests.get('http://exp-api:8000/api/search' + str(request.GET.get('title')))
-    context = req.json()
+    req = requests.get('http://exp-api:8000/api/search/?q=' + request.GET.get('q'))
+    context = {}
+    if req.status_code == 200:
+        search_response = req.json()
+        search_hit_list = search_response['hits']['hits'] # list of search result hits
+        posts = {}
+        for d in search_hit_list:
+            posts[d['_id']] = d['_source']
+        context['posts'] = posts
+    else:
+        context = {'status': False, 'result': req.status_code}
     return render(request, 'search.html', context)
 
 
