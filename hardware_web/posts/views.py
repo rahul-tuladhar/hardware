@@ -20,7 +20,7 @@ def home(request):
 
 
 def search_posts(request):
-    req = requests.get('http://exp-api:8000/api/search' + '?title=e')
+    req = requests.get('http://exp-api:8000/api/search' + str(request.GET.get('title')))
     context = req.json()
     return render(request, 'search.html', context)
 
