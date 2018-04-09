@@ -20,7 +20,7 @@ batch:
       - es:es
    volumes:
       - ./hardware_batch:/app
-   command: bash -c "python runscripts.py"
+   command: bash -c "python /app/runscripts.py"
 
 models:
    image: tp33/django
@@ -54,7 +54,3 @@ web:
    volumes:
       - ./hardware_web:/app
    command: bash -c "pip install requests && pip install django-filter && pip install django-widget-tweaks &&  mod_wsgi-express start-server --reload-on-changes hardware_web/wsgi.py"
-
-
-
-   # command: <run a python script that pulls messages from Kafka and indexs that in ES>
