@@ -1,10 +1,10 @@
-from django.shortcuts import render
 from django.http import JsonResponse, HttpResponse
-import requests
-from django.urls import reverse
-import requests
 from django.views.decorators.csrf import csrf_exempt
-from django.contrib.auth.hashers import is_password_usable, make_password
+from django.contrib.auth.hashers import is_password_usable
+from elasticsearch import Elasticsearch
+from kafka import KafkaProducer
+import json
+import requests
 
 
 # sends GET request to the URL(s) then returns a JsonResponse dictionary for homepage
@@ -13,8 +13,14 @@ def home(request):
     req = requests.get('http://models-api:8000/api/home/')
     context = req.json()
 
-    # return
     return JsonResponse(context)
+
+
+def search_posts(request):
+    es = Elasticsearch(['es'])
+    resp = es.search(index='listing_index',
+                     body={'query': {'query_string': {'query': request.GET.get('q')}}, 'size': 10})
+    return JsonResponse(resp)
 
 
 # details of a post
@@ -62,9 +68,15 @@ def add_post(request):
             'transaction_type': request.POST.get('transaction_type'),
             'title': request.POST.get('title'),
         }
-        req = requests.post('http://models-api:8000/api/add_post/', data=data, cookies= request.COOKIES)
+        # Sends the post data to the
+        req = requests.post('http://models-api:8000/api/add_post/', data=data, cookies=request.COOKIES)
         if req.status_code == 200:
             context = req.json()
+            producer = KafkaProducer(bootstrap_servers='kafka:9092')
+            producer.send('new-listings-topic', json.dumps(context).encode('utf-8'))
+            # TODO: implemented indexing here until we fix batch container
+            # es = Elasticsearch(['es'])
+            # es.index(index='listing_index', doc_type='listing', id=context['result']['id'], body=context['result'])
         else:
             context = {'status': False, 'error': 'reqs raised a 500 error'}
         return JsonResponse(context, safe=False)

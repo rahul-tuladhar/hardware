@@ -5,6 +5,8 @@ from django.views.decorators.csrf import csrf_exempt
 from .forms import *
 from django.contrib.auth.hashers import make_password
 import requests
+import json
+
 
 # sends GET request to the URL then returns a JsonResponse dictionary for homepage
 def home(request):
@@ -16,6 +18,21 @@ def home(request):
     }
 
     return render(request, 'index.html', context)
+
+
+def search_posts(request):
+    req = requests.get('http://exp-api:8000/api/search/?q=' + request.GET.get('q'))
+    context = {}
+    if req.status_code == 200:
+        search_response = req.json()
+        search_hit_list = search_response['hits']['hits']  # list of search result hits
+        posts = {}
+        for d in search_hit_list:
+            posts[d['_id']] = d['_source']
+        context['posts'] = posts
+    else:
+        context = {'status': False, 'result': req.status_code}
+    return render(request, 'search.html', context)
 
 
 # sends a GET reqeust to the URL then returns a JsonResponse for post_detail
@@ -44,7 +61,7 @@ def check_auth(request):
 
 # add a post
 def add_post(request):
-    #for getting the authenticator value for postman
+    # for getting the authenticator value for postman
     # if check_auth(request):
     #     context = {'authenticator': request.COOKIES.get('authenticator')}
     #     return render(request,'auth.html', context)
@@ -53,11 +70,8 @@ def add_post(request):
     if not check_auth(request):
         return render(request, 'not_auth.html')
     if request.method == 'POST':
-
         form = AddPostForm(request.POST)
-
         if form.is_valid():
-
             data = {
                 # 'author': form.cleaned_data['author'],
                 'description': form.cleaned_data['description'],
@@ -70,14 +84,14 @@ def add_post(request):
             }
             req = requests.post('http://exp-api:8000/api/add_post/', data=data, cookies=request.COOKIES)
             response = req.json()
-
             context = {'status': response['status']}
 
             if context['status']:  # the model was successfully added
-
+                # TODO: Add a add post confirmation page
                 return HttpResponseRedirect('/home/')
 
             else:  # the model was not successfully added
+                # TODO: Add message to page
                 form = AddPostForm()
                 return render(request, 'index.html', {'form': form})
 
@@ -86,9 +100,7 @@ def add_post(request):
             return render(request, 'index.html', {'form': form})
 
     else:  # GET request; load a blank form
-
         form = AddPostForm()
-
     return render(request, 'add_post.html', {'form': form})
 
 
@@ -184,7 +196,7 @@ def login(request):
             response = HttpResponseRedirect(reverse('home'))
             response.set_cookie('authenticator', context['result'])
 
-            # return response 
+            # return response
             return response
 
         # if form is not valid send an error
@@ -228,3 +240,17 @@ def logout(request):
 
     # if GET
     return render(request, 'logout.html')
+
+
+# TODO: Project 5: Implement weblayer service level search on Elastic search container
+def search(request):
+    context = {'status': False, 'result': 'empty Context'}
+    if request.method == "POST":
+        detail = {}
+        req = requests.post('http://exp-api:8000/api/search', data=detail)
+        context = req.json()
+
+    if request.method == "GET":
+        req = requests.get('http://exp-api:8000/api/search', cookies=request.COOKIES)
+        context = req.json()
+    return render(request, 'search_results.html', context)

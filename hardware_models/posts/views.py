@@ -1,11 +1,13 @@
 from .models import Profile, Post, Authenticator
 from django.http import JsonResponse, HttpResponse
+from django.core import serializers
 from django.core.exceptions import ObjectDoesNotExist
 from django.forms.models import model_to_dict
 from django.views.decorators.csrf import csrf_exempt
 from django.db import IntegrityError
 from django.contrib.auth.hashers import is_password_usable, check_password
 from hardware_models import settings
+from .filters import *
 import os
 import hmac
 
@@ -36,7 +38,6 @@ def home(request):
         all_posts = Post.objects.all().values()
         all_posts_dict = {'status': 'Nothing to POST'}
     return JsonResponse(all_posts_dict, safe=False)
-
 
 # returns the details of a specific post
 def post_detail(request, id):
@@ -96,18 +97,29 @@ def add_post(request):
             auth = request.COOKIES.get('authenticator')
             auth_object = Authenticator.objects.get(auth=auth)
             user_profile = Profile.objects.get(id=auth_object.user_id)
+            data = {
+                # 'author': request.POST.get('author'),
+                'description': request.POST.get('description'),
+                'location': request.POST.get('location'),
+                'part': request.POST.get('part'),
+                'payment_method': request.POST.get('payment_method'),
+                'price': request.POST.get('price'),
+                'transaction_type': request.POST.get('transaction_type'),
+                'title': request.POST.get('title'),
+            }
             new_post = Post(
                 author=user_profile,
-                description=request.POST.get('description'),
-                location=request.POST.get('location'),
-                part=request.POST.get('part'),
-                payment_method=request.POST.get('payment_method'),
-                price=request.POST.get('price'),
-                transaction_type=request.POST.get('transaction_type'),
-                title=request.POST.get('title'),
+                description=data['description'],
+                location=data['location'],
+                part=data['part'],
+                payment_method=data['payment_method'],
+                price=data['price'],
+                transaction_type=data['transaction_type'],
+                title=data['title'],
             )
             new_post.save()
-            context = {'status': True, 'result': 'Success'}
+            data['id'] = new_post.id
+            context = {'status': True, 'result': data}
         except ObjectDoesNotExist:
             context = {'status': False, 'result': request.COOKIES.get('authenticator')}
 
@@ -215,7 +227,7 @@ def create_authenticator(u_id):
     # turn into dictionary
     auth_dict = model_to_dict(new_auth)
 
-    # return 
+    # return
     return auth_dict
 
 
@@ -251,28 +263,3 @@ def logout(request):
     # if trying to GET
     return HttpResponse("Error, cannot complete GET request")
 
-# # Create your views here.
-# def user_profile(request, username=None):
-#     """
-#     :param request: HTTP request
-#     :param username: Given username for retrieving object attributes
-#     :return: JsonResponse of serialized attributes
-#     """
-
-#     if request.method == 'GET':
-#         try:
-#             profile = Profile.objects.get(username=username)
-#             x = model_to_dict(profile)
-#         except ObjectDoesNotExist:
-#             return JsonResponse({'status': 'false', 'message': 'ObjectDoesNotExist'}, status=500)
-
-#     if request.method == 'POST':
-#         try:
-#             profile = Profile.objects.get(username=username)
-#             x = model_to_dict(profile)
-#             return JsonResponse({'status': 'true', 'message': 'Cannot edit'})
-#         except ObjectDoesNotExist:
-#             return JsonResponse({'status': 'false', 'message': 'ObjectDoesNotExist'})
-
-#     del x['affiliations']
-#     return JsonResponse(x, safe=False)
