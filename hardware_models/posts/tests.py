@@ -4,9 +4,8 @@ from posts.views import *
 import requests
 import unittest
 
-#home view
-class HomepageTestCase(TestCase):
-
+#empty home view
+class EmptyHomepageTestCase(TestCase):
 
     #get from empty homepage 
     def test_homepage_get_empty(self):
@@ -34,8 +33,12 @@ class HomepageTestCase(TestCase):
             {'status': 'Nothing to POST'}
         )
 
-    #get from populated homepage
-    def test_homepage_get_normal(self):
+
+#filled homepage view
+class FilledHomepageTestCase(TestCase):
+
+    #setup to have populated homepage
+    def setUp(self):
 
         u = Profile(
             display_name='Tester',
@@ -56,16 +59,18 @@ class HomepageTestCase(TestCase):
             title='test')
         p.save()
 
+    #get from populated homepage
+    def test_homepage_get_normal(self):
+
         c = Client()
 
         response = c.get('/api/home/')
 
         self.assertEqual(response.status_code, 200)
-        # self.assertJSONEqual(
-        #     str(response.content, encoding='utf8'),
-        #     {'result': {'1': {'author': 'Tester', 'date': '2018-03-26T01:03:13.178Z', 'description': 'test', 'location': 'test', 'part': 'test', 'payment_method': 'test', 'price': 0.0, 'transaction_type': 'test', 'title': 'test'}}, 'status': True}
-        # )
-
+        self.assertJSONEqual(
+            str(response.content, encoding='utf8'),
+            {'result': {'3': {'author_id': 3, 'date': '2018-03-26T01:03:13.178Z', 'description': 'test', 'id': 3, 'location': 'test', 'part': 'test', 'payment_method': 'test', 'price': 0.0, 'title': 'test', 'transaction_type': 'Buying'}}, 'status': True}
+        )
 
     #post from populated homepage
     def test_homepage_post_normal(self):
@@ -80,56 +85,15 @@ class HomepageTestCase(TestCase):
             {'status': 'Nothing to POST'}
         )
 
+    #teardown
+    def teardown(self):
+        p.delete()
+        u.delete()
 
 
-#post_detail view
-class DetailTestCase(TestCase):
 
-    def setup(self):
-
-        u = Profile(
-            display_name='Tester',
-            email='tester@test.com',
-            password='Test',
-            username='Tester'
-        )
-        u.save()
-
-        p = Post(
-            author=u,
-            date='2018-03-26T01:03:13.178Z',
-            description='Descirption',
-            location='location',
-            part='Computer',
-            payment_method='cash',
-            price=10.0,
-            transaction_type='Buying',
-            title='first',
-        )
-        p.save()
-
-    #get request on non-empty detail page
-    def test_detail_get_stuff(self):
-
-        c = Client()
-
-        response = c.get('/api/post_detail/1')
-
-        self.assertEqual(response.status_code, 200)
-        ##########stuff to test response page?????????##############
-
-    #post request on non-empty detail page
-    def test_detail_post_stuff(self):
-
-        c = Client()
-
-        response = c.post('/api/post_detail/1')
-
-        self.assertEqual(response.status_code, 200)
-        self.assertJSONEqual(
-            str(response.content, encoding='utf8'),
-            {'status': 'nothing to POST, only viewing a post detail'}
-        )
+#post_detail view empty
+class EmptyDetailTestCase(TestCase):
 
     #get request on empty detail page
     def test_detail_get_empty(self):
@@ -159,9 +123,65 @@ class DetailTestCase(TestCase):
 
 
 
+#filled post_detail view
+class FilledDetailTestCase(TestCase):
 
-#check_auth view
-class CheckAuthTestCase(TestCase):
+    def setUp(self):
+
+        u = Profile(
+            display_name='Tester',
+            email='tester@test.com',
+            password='Test',
+            username='Tester')
+        u.save()
+
+        p = Post.objects.create(
+            author=u,
+            date='2018-03-26T01:03:13.178Z',
+            description='test',
+            location='test',
+            part='test',
+            payment_method='test',
+            price=0.0,
+            transaction_type='Buying',
+            title='test')
+        p.save()
+
+
+    #get request on non-empty detail page
+    def test_detail_get_stuff(self):
+
+        c = Client()
+
+        response = c.get('/api/post_detail/1')
+
+        self.assertEqual(response.status_code, 200)
+        self.assertJSONEqual(
+            str(response.content, encoding='utf8'),
+            {'author': 1, 'date': '2018-03-26T01:03:13.178Z', 'description': 'test', 'id': 1, 'location': 'test', 'part': 'test', 'payment_method': 'test', 'price': 0.0, 'transaction_type': 'Buying', 'title': 'test'}
+        )
+
+    #post request on non-empty detail page
+    def test_detail_post_stuff(self):
+
+        c = Client()
+
+        response = c.post('/api/post_detail/1')
+
+        self.assertEqual(response.status_code, 200)
+        self.assertJSONEqual(
+            str(response.content, encoding='utf8'),
+            {'status': 'nothing to POST, only viewing a post detail'}
+        )
+
+    def teardown(self):
+        p.delete()
+        u.delete()
+
+
+
+#not authenticated check_auth view
+class NotCheckAuthTestCase(TestCase):
 
 
     #get when auth doesnt exist
@@ -172,7 +192,6 @@ class CheckAuthTestCase(TestCase):
         response = c.get('/api/check_auth')
 
         self.assertEqual(response.status_code, 301)
-        # self.assertEqual(response.content, "Error, cannot complete GET request")
 
     #post when auth doesnt exist
     def test_checkauth_post_noauth(self):
@@ -186,6 +205,10 @@ class CheckAuthTestCase(TestCase):
         #     {'status': False}
         # )
 
+
+
+#authenticated check_auth view
+class YesCheckAuthTestCase(TestCase):
 
     #create an authenticator
     def setUp(self):
@@ -204,7 +227,6 @@ class CheckAuthTestCase(TestCase):
         response = c.get('/api/check_auth')
 
         self.assertEqual(response.status_code, 301)
-        # self.assertEqual(response.content, "Error, cannot complete GET request")
 
 
     #post when auth exists
@@ -220,10 +242,13 @@ class CheckAuthTestCase(TestCase):
         #     {'status': True}
         # )
 
+    def teardown(self):
+        a.delete()
 
 
-#add_post view
-class AddPostTestCase(TestCase):
+
+#when logged out add_post view
+class OutAddPostTestCase(TestCase):
 
     #get when logged out
     def test_add_get_out(self):
@@ -245,8 +270,11 @@ class AddPostTestCase(TestCase):
         c = Client()
 
         response = c.post('/api/add_post/')
-        
 
+
+
+#when logged in add_post view
+class InAddPostTestCase(TestCase):
 
     #setup to be logged in 
 
@@ -275,8 +303,8 @@ class AddPostTestCase(TestCase):
 
 
 
-# #register view
-class RegisterTestCase(TestCase):
+# not registered register view
+class NotRegisterTestCase(TestCase):
 
     #get when not registered
     def test_register_get_notregistered(self):
@@ -295,6 +323,10 @@ class RegisterTestCase(TestCase):
 
         # response = c.post('/api/register/')
 
+
+
+# not registered register view
+class YesRegisterTestCase(TestCase):
 
     # #setup to register user
     # def setup(self):
@@ -320,8 +352,8 @@ class RegisterTestCase(TestCase):
 
 
 
-#login view
-class LoginTestCase(TestCase):
+#logged out login view
+class OutLoginTestCase(TestCase):
 
     #get when logged out
     def test_login_get_logged_out(self):
@@ -339,6 +371,11 @@ class LoginTestCase(TestCase):
         c = Client()
 
         # response = c.post('/api/login/')
+
+
+
+#logged in login view
+class InLoginTestCase(TestCase):
 
     # #setup to be logged in
     # def setup(self):
@@ -364,8 +401,9 @@ class LoginTestCase(TestCase):
 
 
 
-# #logout view
-class LogoutTestCase(TestCase):
+
+# logged out logout view
+class OutLogoutTestCase(TestCase):
 
     #get when logged out
     def test_logout_get_logged_out(self):
@@ -389,6 +427,10 @@ class LogoutTestCase(TestCase):
         #     str(response.content, encoding='utf8'),
         #     {'status': False, 'result': 'User is not logged in'}
         # )
+
+
+#logged in login view
+class InLogoutTestCase(TestCase):
 
     # #setup logging in 
     def setUp(self):
@@ -421,5 +463,9 @@ class LogoutTestCase(TestCase):
         #     str(response.content, encoding='utf8'), 
         #     {'status': True, 'result': 'You have successfully logged out'}
         # )
+
+    def teardown(self):
+
+        a.delete()
 
 
