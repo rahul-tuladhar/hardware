@@ -52,4 +52,11 @@ batch:
    links:
       - kafka:kafka
       - es:es
+   volumes:
+     - ./hardware_models:/app
+   command: |
+    python
+    > from kafka import KafkaConsumer
+    > while(true):
+      print('1')
    # command: <run a python script that pulls messages from Kafka and indexs that in ES>
