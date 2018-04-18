@@ -14,21 +14,21 @@ while True:
 
 
 # Receives a message from Kafka producer and indexes in es
-
-with open('fixtures.json', encoding='utf-8') as data_file:
-    data = json.loads(data_file.read())
-for post in data:
-    # print(post)
-    try:
-        if post['model'] == 'posts.post':
-            print(post['fields'])
-            print(post['pk'])
-            es.index(index='listing_index', doc_type='listing', id=post['pk'], body=post['fields'])
-            print(post['fields'])
-            es.indices.refresh(index="listing_index")
-    except:
-        print('error in index')
-
+#
+# with open('fixtures.json', encoding='utf-8') as data_file:
+#     data = json.loads(data_file.read())
+# for post in data:
+#     # print(post)
+#     try:
+#         if post['model'] == 'posts.post':
+#             print(post['fields'])
+#             print(post['pk'])
+#             es.index(index='listing_index', doc_type='listing', id=post['pk'], body=post['fields'])
+#             print(post['fields'])
+#             es.indices.refresh(index="listing_index")
+#     except:
+#         print('error in index')
+#
 
 while True:
     print('true')
