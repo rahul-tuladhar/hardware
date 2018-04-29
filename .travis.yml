@@ -1,11 +1,27 @@
-
 language: python
+
 python:
   - "3.5"
+
 sudo: required
+
 services:
   - docker
+
 before_install:
-  - docker exec -it hardware_models_1 bash -c "pip install requests && pip install django-filter && pip install django-widget-tweaks && python manage.py makemigrations posts && python manage.py migrate && python manage.py loaddata /app/fixture/fixtures.json && mod_wsgi-express start-server --reload-on-changes hardware_models/wsgi.py"
+  - docker pull tp33/django
+
+install:
+  - pip install coveralls
+  - pip install Django==1.13
+  - pip install django-widget-tweaks
+  - pip install django-filter
+  - pip install pyyaml
+  - pip install requests
+
 script:
-  - python ./hardware_models/manage.py test
+  - coverage run app/manage.py test
+  - coverage report -m
+
+after_success:
+  coveralls
