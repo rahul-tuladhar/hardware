@@ -27,6 +27,6 @@ before_script:
 - docker-compose -f docker-compose.yml up -d
 
 script:
-  - docker exec -it hardware_models_1 bash -c "cd /app/hardware_models;./manage.py test"
+  - docker exec -it hardware_models_1 bash -c "./manage.py test"
 notifications:
   email: false
