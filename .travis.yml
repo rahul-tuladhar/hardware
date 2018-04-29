@@ -12,9 +12,9 @@ before_install:
   - docker pull tp33/django
 
 install:
-  - pip install django-widget-tweaks
-  - pip install django-filter
-  - pip install requests
+  - pip3 install django-widget-tweaks
+  - pip3 install django-filter
+  - pip3 install requests
   - docker pull mysql:5.7.14
   - mkdir db
   - docker run --name mysql -d -e MYSQL\_ROOT\_PASSWORD='$3cureUS' -v ~/cs4501/db:/var/lib/mysql  mysql:5.7.14
