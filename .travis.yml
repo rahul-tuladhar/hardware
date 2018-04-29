@@ -1,1 +1,33 @@
+language: python
 
+python:
+  - "3.5"
+
+sudo: required
+
+services:
+  - docker
+
+before_install:
+  - docker pull tp33/django
+
+install:
+  - pip3 install requests
+  - docker pull mysql:5.7.14
+  - mkdir db
+  - docker run --name mysql -d -e MYSQL\_ROOT\_PASSWORD='$3cureUS' -v ~/cs4501/db:/var/lib/mysql  mysql:5.7.14
+  - sleep 10
+  - >
+    docker run -it --name mysql-cmd --rm --link mysql:db mysql:5.7.14
+    mysql -uroot -p'$3cureUS' -h db -v -e
+    "CREATE DATABASE cs4501 CHARACTER SET utf8;
+    CREATE USER 'www'@'%' IDENTIFIED BY '\$3cureUS';
+    GRANT ALL PRIVILEGES ON *.* TO 'www'@'%';"
+
+before_script:
+  - docker-compose -f docker-compose.yml up -d
+
+script:
+  - docker exec -it hardware_models_1 bash -c "pip install requests && ./manage.py test"
+notifications:
+  email: false

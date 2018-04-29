@@ -7,7 +7,6 @@ from django.views.decorators.csrf import csrf_exempt
 from django.db import IntegrityError
 from django.contrib.auth.hashers import is_password_usable, check_password
 from hardware_models import settings
-from .filters import *
 import os
 import hmac
 
@@ -264,4 +263,3 @@ def logout(request):
 
     # if trying to GET
     return HttpResponse("Error, cannot complete GET request")
-
