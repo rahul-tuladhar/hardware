@@ -12,11 +12,14 @@ before_install:
   - docker pull tp33/django
 
 install:
-- docker pull mysql:5.7.14
-- mkdir db
-- docker run --name mysql -d -e MYSQL\_ROOT\_PASSWORD='$3cureUS' -v ~/cs4501/db:/var/lib/mysql  mysql:5.7.14
-- sleep 10
-- >
+  - pip install django-widget-tweaks
+  - pip install django-filter
+  - pip install requests
+  - docker pull mysql:5.7.14
+  - mkdir db
+  - docker run --name mysql -d -e MYSQL\_ROOT\_PASSWORD='$3cureUS' -v ~/cs4501/db:/var/lib/mysql  mysql:5.7.14
+  - sleep 10
+  - >
     docker run -it --name mysql-cmd --rm --link mysql:db mysql:5.7.14
     mysql -uroot -p'$3cureUS' -h db -v -e
     "CREATE DATABASE cs4501 CHARACTER SET utf8;
@@ -24,7 +27,7 @@ install:
     GRANT ALL PRIVILEGES ON *.* TO 'www'@'%';"
 
 before_script:
-- docker-compose -f docker-compose.yml up -d
+  - docker-compose -f docker-compose.yml up -d
 
 script:
   - docker exec -it hardware_models_1 bash -c "./manage.py test"
