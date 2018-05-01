@@ -30,5 +30,5 @@ class RegistrationForm(forms.Form):
 
 
 class LoginForm(forms.Form):
-    username = forms.CharField(label='Username: ', max_length=24)
-    password = forms.CharField(label='Password: ', widget=forms.PasswordInput())
+    username = forms.CharField(label='Username: ', name='username', max_length=24)
+    password = forms.CharField(label='Password: ', name='password', widget=forms.PasswordInput())
