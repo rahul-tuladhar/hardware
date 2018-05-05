@@ -91,39 +91,44 @@ def check_auth(request):
 
 
 def add_post(request):
-    try:
-        # resp = check_auth(request).json()
-        # if resp['status']:
-        auth = request.COOKIES.get('authenticator')
-        auth_object = Authenticator.objects.get(auth=auth)
-        user_profile = Profile.objects.get(id=auth_object.user_id)
-        data = {
-            # 'author': request.POST.get('author'),
-            'description': request.POST.get('description'),
-            'location': request.POST.get('location'),
-            'part': request.POST.get('part'),
-            'payment_method': request.POST.get('payment_method'),
-            'price': request.POST.get('price'),
-            'transaction_type': request.POST.get('transaction_type'),
-            'title': request.POST.get('title'),
-        }
-        new_post = Post(
-            author=user_profile,
-            description=data['description'],
-            location=data['location'],
-            part=data['part'],
-            payment_method=data['payment_method'],
-            price=data['price'],
-            transaction_type=data['transaction_type'],
-            title=data['title'],
-        )
-        new_post.save()
-        data['id'] = new_post.id
-        context = {'status': True, 'result': data}
-    except ObjectDoesNotExist:
-        context = {'status': False, 'result': request.COOKIES.get('authenticator')}
+    if request.method == 'POST':
+        try:
+            # resp = check_auth(request).json()
+            # if resp['status']:
+            auth = request.COOKIES.get('authenticator')
+            auth_object = Authenticator.objects.get(auth=auth)
+            user_profile = Profile.objects.get(id=auth_object.user_id)
+            data = {
+                # 'author': request.POST.get('author'),
+                'description': request.POST.get('description'),
+                'location': request.POST.get('location'),
+                'part': request.POST.get('part'),
+                'payment_method': request.POST.get('payment_method'),
+                'price': request.POST.get('price'),
+                'transaction_type': request.POST.get('transaction_type'),
+                'title': request.POST.get('title'),
+            }
+            new_post = Post(
+                author=user_profile,
+                description=data['description'],
+                location=data['location'],
+                part=data['part'],
+                payment_method=data['payment_method'],
+                price=data['price'],
+                transaction_type=data['transaction_type'],
+                title=data['title'],
+            )
+            new_post.save()
+            data['id'] = new_post.id
+            context = {'status': True, 'result': data}
+        except ObjectDoesNotExist:
+            context = {'status': False, 'result': request.COOKIES.get('authenticator')}
 
-    return JsonResponse(context)
+        return JsonResponse(context)
+    else:
+        context = {'status': True, 'result': 'Get'}
+        return JsonResponse(context)
+
 
 
 # registering a new user
