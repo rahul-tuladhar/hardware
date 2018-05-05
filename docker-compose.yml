@@ -55,3 +55,26 @@ web:
    volumes:
       - ./hardware_web:/app
    command: bash -c "pip install requests && pip install django-filter && pip install django-widget-tweaks &&  mod_wsgi-express start-server --reload-on-changes hardware_web/wsgi.py"
+
+web2:
+   image: tp33/django
+   links:
+      - exp:exp-api
+   ports:
+      - "8004:8000"
+   volumes:
+      - ./hardware_web:/app
+   command: bash -c "pip install requests && pip install django-filter && pip install django-widget-tweaks &&  mod_wsgi-express start-server --reload-on-changes hardware_web/wsgi.py"
+
+haproxy:
+   image: haproxy:1.7
+   links:
+      - web
+      - web2
+   ports:
+      - "80:8000"
+   volumes:
+      - ./:/app
+      - ./haproxy/haproxy.cfg:/usr/local/etc/haproxy/haproxy.cfg
+
+
