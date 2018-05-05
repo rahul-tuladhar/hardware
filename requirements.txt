@@ -1,0 +1,5 @@
+requests
+django
+django-filter
+django-widget-tweaks
+MySQLdb

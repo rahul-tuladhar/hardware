@@ -7,7 +7,6 @@ from django.views.decorators.csrf import csrf_exempt
 from django.db import IntegrityError
 from django.contrib.auth.hashers import is_password_usable, check_password
 from hardware_models import settings
-from .filters import *
 import os
 import hmac
 
@@ -33,6 +32,7 @@ def home(request):
             response = {'status': False, 'result': all_posts_dict}
             # return json object with failure message
             return JsonResponse(response, safe=False)
+
     # if attempting to save data to DB
     if request.method == 'POST':
         all_posts = Post.objects.all().values()
@@ -52,7 +52,7 @@ def post_detail(request, id):
         post_dict = {'status': 'nothing to POST, only viewing a post detail'}
     return JsonResponse(post_dict, safe=False)
 
-
+# not implemented
 def edit_post(request, id):
     if request.method == 'GET':
         post_dict = {'status': 'should not get request edit_post'}
@@ -69,6 +69,7 @@ def edit_post(request, id):
 # see if the authenticator exists
 @csrf_exempt
 def check_auth(request):
+
     # if method is POST
     if request.COOKIES.get('authenticator'):
 
@@ -258,4 +259,3 @@ def logout(request):
 
     # if trying to GET
     return HttpResponse("Error, cannot complete GET request")
-
