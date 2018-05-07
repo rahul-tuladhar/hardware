@@ -13,27 +13,26 @@ class PythonOrgSearch(unittest.TestCase):
 
     def test_login(self):
     	driver = self.driver
-    	driver.get("http://127.0.0.1:8000/login/")
-    	assert "Base Site" in driver.title
+    	driver.get("web:8000/login/")
 
-    	# # find form fields
-    	# username = driver.find_element_by_id("id_username")
-    	# password = driver.find_element_by_id("id_password")
-    	# submit = driver.find_element_by_id("id_login")
+    	# find form fields
+    	username = driver.find_element_by_id("id_username")
+    	password = driver.find_element_by_id("id_password")
+    	submit = driver.find_element_by_id("id_login")
 
-    	# # clear them
-    	# username.clear()
-    	# password.clear()
+    	# clear them
+    	username.clear()
+    	password.clear()
 
-    	# # send stuff
-    	# username.send_keys("none")
-    	# password.send_keys("none")
-    	# submit.submit()
+    	# send stuff
+    	username.send_keys("none")
+    	password.send_keys("none")
+    	submit.submit()
 
-    	# #see if the user got logged in
-    	# source = driver.page_source
-    	# found = re.search(r'Login', source)
-    	# value = self.assertNotEqual(found, None)
+    	#see if the user got logged in
+    	source = driver.page_source
+    	found = re.search(r'Login', source)
+    	value = self.assertNotEqual(found, None)
 
     # def test_logout(self):
     # 	driver = self.driver
