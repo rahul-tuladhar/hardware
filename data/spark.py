@@ -82,14 +82,14 @@ c.execute("delete from posts_recommendation;")
 
 # create execution string for each item and execute
 for key, value in rec_lists.items():
-	line = ("insert into posts_recommendation (item_id, rec_items) values (%d, %s);" % (key, value))
-	c.execute(line);
+	line = ("insert into posts_recommendation (item_id, rec_items) values (%d, \"%s\");" % (key, value))
+	c.execute(line)
 
 # commit changes
 db.commit()
 
-c.execute("select * from posts_recommendation")
-print(cursor.fetchall())
+# c.execute("select * from posts_recommendation")
+# print(c.fetchall())
 
 db.close()
 

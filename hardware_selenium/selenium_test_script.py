@@ -159,7 +159,7 @@ class PythonOrgSearch(unittest.TestCase):
         value = self.assertNotEqual(found, None)
 
     def tearDown(self):
-    	self.driver.close()
+        self.driver.close()
 
 if __name__ == "__main__":
-	unittest.main()
+    unittest.main()
