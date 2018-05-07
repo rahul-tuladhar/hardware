@@ -1,6 +1,6 @@
+
 from pyspark import SparkContext
 import MySQLdb
-
 
 #------------------- SPARK RECOMMENDATION SECTION ----------------------#
 sc = SparkContext("spark://spark-master:7077", "PopularItems")
@@ -26,21 +26,50 @@ views = pairs.distinct().groupByKey()		# group by page pairs that are distinct
 count = views.map(lambda line: (line[0], len(line[1])))	
 
 #------ Filter out any results where less than 3 users co-clicked the same pair of items ----------#
-final = count.filter(lambda line: line[1] >= 3)
-final = final.map(lambda line: line[0])
+final = count.filter(lambda line: line[1] >= 3)			# only include results with 3 or more matches
+final = final.map(lambda line: line[0])					# get rid of the count and just have the pairs
 
 #------ Collect results from workers ----------#
 output = final.collect() 
 
-for page_id, count in output:
-	print("pages: ")
-	print(list(page_id))
-	print(count)
-print ("Popular items done")
+# for page_id in output:
+# 	print("pages: ")
+# 	print(page_id[0])
+# print ("Popular items done")
 
 sc.stop()
 
+#------------------- FORMATTING SECTION ----------------------#
+# create a dictionary
+rec_lists = {}
 
+# loop through all pairs and place into dictionary as lists
+for pair in output:
+	# if value already is in dictionary
+	if pair[0] in rec_lists:
+		# add the next value onto the list
+		rec_lists[pair[0]].append(pair[1])
+	else:
+		#create a new key-value pair
+		rec_lists[pair[0]] = [pair[1]]
+
+	# if value already is in dictionary
+	if pair[1] in rec_lists:
+		# add the next value onto the list
+		rec_lists[pair[1]].append(pair[0])
+	else:
+		#create a new key-value pair
+		rec_lists[pair[1]] = [pair[0]]
+
+#turn the list into a string
+for x in rec_lists:
+	','.join(str(i) for i in rec_lists[x])
+
+# for x in rec_lists:
+#     print("item_id: %d" % x)
+#     print(rec_lists[x])
+
+    	
 #------------------- SQL DATABASE SECTION ----------------------#
 db = MySQLdb.connect(host="db",user="www", passwd="$3cureUS",db="cs4501") 
 c = db.cursor()
@@ -51,12 +80,16 @@ c.execute("use cs4501;")
 # clear the recommendation table
 c.execute("delete from posts_recommendation;")
 
-# 
+# create execution string for each item and execute
+for key, value in rec_lists.items():
+	line = ("insert into posts_recommendation (item_id, rec_items) values (%d, %s);" % (key, value))
+	c.execute(line);
 
+# commit changes
+db.commit()
 
-
-
-
+c.execute("select * from posts_recommendation")
+print(cursor.fetchall())
 
 db.close()
 
