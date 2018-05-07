@@ -55,6 +55,24 @@ web:
    volumes:
       - ./hardware_web:/app
    command: bash -c "pip install requests && mod_wsgi-express start-server --reload-on-changes hardware_web/wsgi.py"
+
+selenium-chrome:
+  image: selenium/standalone-chrome
+  container_name: selenium-chrome
+  links:
+    - web:web
+  ports:
+    - "4444:4444"
+
+selenium-test:
+  image: tp33/django
+  container_name: selenium-test
+  links:
+    - selenium-chrome:selenium-chrome
+    - web:web
+  volumes:
+    - ./hardware_selenium:/app
+  command: bash -c "pip install selenium==3.11.0 && python /app/selenium_test_script.py"
    
 web2:
    image: tp33/django
@@ -76,3 +94,4 @@ haproxy:
    volumes:
       - ./:/app
       - ./haproxy/haproxy.cfg:/usr/local/etc/haproxy/haproxy.cfg
+
