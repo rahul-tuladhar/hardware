@@ -1,4 +1,4 @@
-from .models import Profile, Post, Authenticator
+from .models import Profile, Post, Authenticator, Recommendation
 from django.http import JsonResponse, HttpResponse
 from django.core import serializers
 from django.core.exceptions import ObjectDoesNotExist
@@ -44,7 +44,20 @@ def post_detail(request, id):
     if request.method == 'GET':
         try:
             post = Post.objects.get(id=id)
+            recommendations = Recommendation.objects.get(item_id=id)
+            rec_list = recommendations.rec_items.split(',')
             post_dict = model_to_dict(post)
+            post_dict['rec_ids'] = rec_list
+            item_list = []
+            for rec_id in rec_list:
+                recommendation = Post.objects.get(id=rec_id)
+                item_list.append(recommendation.title)
+            post_dict['rec_items'] = item_list
+            item_tuples = []
+            for i in range(len(item_list)):
+                tuple = (i,rec_list[i],item_list[i])
+                item_tuples.append(tuple)
+            post_dict['tuples'] = item_tuples
         except ObjectDoesNotExist:
             post_dict = {'error': 'object does not exist'}
     # if trying to post information to the DB

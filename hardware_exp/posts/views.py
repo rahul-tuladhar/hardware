@@ -28,12 +28,7 @@ def post_detail(request, id):
     # get json response
     req = requests.get('http://models-api:8000/api/post_detail/' + str(id))
     context = req.json()
-
-    # get json response
-    req = requests.get('http://models-api:8000/api/post_detail/' + str(id))
-    response = req.json()
-
-    context = response
+    
     return JsonResponse(context)
 
 
