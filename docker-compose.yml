@@ -73,4 +73,25 @@ selenium-test:
   volumes:
     - ./hardware_selenium:/app
   command: bash -c "pip install selenium==3.11.0 && python /app/selenium_test_script.py"
+   
+web2:
+   image: tp33/django
+   links:
+      - exp:exp-api
+   ports:
+      - "8004:8000"
+   volumes:
+      - ./hardware_web:/app
+   command: bash -c "pip install requests && mod_wsgi-express start-server --reload-on-changes hardware_web/wsgi.py"
+
+haproxy:
+   image: haproxy:1.7
+   links:
+      - web
+      - web2
+   ports:
+      - "80:8000"
+   volumes:
+      - ./:/app
+      - ./haproxy/haproxy.cfg:/usr/local/etc/haproxy/haproxy.cfg
 

@@ -130,6 +130,7 @@ def add_post(request):
         return JsonResponse(context)
 
 
+
 # registering a new user
 @csrf_exempt
 def register(request):
