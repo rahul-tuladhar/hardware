@@ -79,48 +79,44 @@ class PythonOrgSearch(unittest.TestCase):
     	password.clear()
 
     	#send stuff
-    	username.send_keys("none1")
+    	username.send_keys("none2")
     	name.send_keys("Kat Yan")
-    	email.send_keys("test@gmail.com")
-    	password.send_keys("none1")
-    	register.submit()
+    	email.send_keys("test2@gmail.com")
+    	password.send_keys("none2")
+    	register.submit();
 
-    	source = driver.page_source
-    	found = re.search(r'Need to create an account\?', source)
-    	value = self.assertNotEqual(found, None)
-
-    	#login with registered user
-    	# login_username = driver.find_element_by_id("id_username")
-    	# login_password = driver.find_element_by_id("id_password")
-    	# submit = driver.find_element_by_id("id_login")
-    	# login_username.clear()
-    	# login_password.clear()
-    	# login_username.send_keys("none1")
-    	# login_password.send_keys("none1")
-    	# submit.submit()
-
-    	# #see if the user got logged in
-    	# source = driver.page_source
-    	# found = re.search(r'Welcome to the homepage', source)
-    	# value = self.assertNotEqual(found, None)
-
-    def test_add_post(self):
-    	driver = self.driver
-    	driver.get('web:8000/login/')
-
-    	#login with registered user
+    	# login with registered user
     	login_username = driver.find_element_by_id("id_username")
     	login_password = driver.find_element_by_id("id_password")
     	submit = driver.find_element_by_id("id_login")
-    	login_sername.clear()
+    	login_username.clear()
     	login_password.clear()
-    	login_username.send_keys("none")
-    	login_password.send_keys("none")
+    	login_username.send_keys("none2")
+    	login_password.send_keys("none2")
+    	submit.submit()
+
+    	#see if the user got logged in
+    	source = driver.page_source
+    	found = re.search(r'Welcome to the homepage', source)
+    	value = self.assertNotEqual(found, None)
+
+    def test_add_post(self):
+    	driver = self.driver
+    	driver.get("web:8000/login/")
+
+    	#login with registered user
+    	username = driver.find_element_by_id("id_username")
+    	password = driver.find_element_by_id("id_password")
+    	submit = driver.find_element_by_id("id_login")
+    	username.clear()
+    	password.clear()
+    	username.send_keys("none")
+    	password.send_keys("none")
     	submit.submit()
 
     	#find the add post page
-    	add_post = driver.find_element_by_id("add_post")
-    	add_post.submit()
+    	add_post = driver.find_element_by_xpath('//a[@href="/add_post/"]');
+    	add_post.click();
 
     	#find fields of post
     	title = driver.find_element_by_id("id_title")
@@ -133,8 +129,8 @@ class PythonOrgSearch(unittest.TestCase):
     	submit_post = driver.find_element_by_id("add_post_button")
 
     	#create post
-    	title.send_keys("This should appear test")
-    	price.send_keys("10.00")
+    	title.send_keys("Selenium test")
+    	price.send_keys("20.00")
     	part.send_keys("Backend")
     	description.send_keys("A test")
     	location.send_keys("Charlottesville")
@@ -144,7 +140,7 @@ class PythonOrgSearch(unittest.TestCase):
 
     	#see if it worked
     	source = driver.page_source
-    	found = re.search(r'\$10.0 This should appear test', source)
+    	found = re.search(r'Selenium test', source)
     	value = self.assertNotEqual(found, None)
 
     def testSearchPost(self):
