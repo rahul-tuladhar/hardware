@@ -38,7 +38,7 @@ def search_posts(request):
 # sends a GET reqeust to the URL then returns a JsonResponse for post_detail
 def post_detail(request, id):
     # get the json response
-    req = requests.get('http://exp-api:8000/api/post_detail/' + str(id))
+    req = requests.get('http://exp-api:8000/api/post_detail/' + str(id),cookies=request.COOKIES)
 
     # set the context to be the single post
     context = req.json()

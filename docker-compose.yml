@@ -23,6 +23,15 @@ batch:
       - ./hardware_models/fixture:/app/fixture
    command: bash -c "python /app/runscripts.py"
 
+data:
+   image: tp33/django
+   container_name: data
+   links:
+      - kafka:kafka
+   volumes:
+      - ./data:/app
+   command: bash -c "python /app/coview_data.py"
+
 models:
    image: tp33/django
    external_links:
