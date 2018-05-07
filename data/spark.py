@@ -27,15 +27,16 @@ count = views.map(lambda line: (line[0], len(line[1])))
 
 #------ Filter out any results where less than 3 users co-clicked the same pair of items ----------#
 final = count.filter(lambda line: line[1] >= 3)
+final = final.map(lambda line: line[0])
 
 #------ Collect results from workers ----------#
 output = final.collect() 
 
-# for page_id, count in output:
-# 	print("pages: ")
-# 	print(list(page_id))
-# 	print(count)
-# print ("Popular items done")
+for page_id, count in output:
+	print("pages: ")
+	print(list(page_id))
+	print(count)
+print ("Popular items done")
 
 sc.stop()
 
@@ -47,9 +48,10 @@ c = db.cursor()
 # use the correct table
 c.execute("use cs4501;")
 
+# clear the recommendation table
+c.execute("delete from posts_recommendation;")
 
-
-
+# 
 
 
 

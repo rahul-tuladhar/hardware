@@ -59,3 +59,6 @@ class Authenticator(models.Model):
         """
         return self.auth
 
+class Recommendation(models.Model):
+    item_id = models.IntegerField(primary_key=True, default = 0)
+    rec_items = models.CharField(max_length=200)
