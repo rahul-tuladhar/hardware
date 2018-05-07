@@ -31,7 +31,7 @@ class PythonOrgSearch(unittest.TestCase):
 
     	#see if the user got logged in
     	source = driver.page_source
-    	found = re.search(r'Login', source)
+    	found = re.search(r'Welcome to the homepage', source)
     	value = self.assertNotEqual(found, None)
 
     def test_logout(self):
@@ -44,12 +44,12 @@ class PythonOrgSearch(unittest.TestCase):
     	submit = driver.find_element_by_id("id_login")
 
     	# clear them
-    	username.clear()
-    	password.clear()
+    	login_username.clear()
+    	login_password.clear()
 
     	# send stuff
-    	username.send_keys("none")
-    	password.send_keys("none")
+    	login_username.send_keys("none")
+    	login_password.send_keys("none")
     	submit.submit()
 
     	#find fields from home page
@@ -57,14 +57,16 @@ class PythonOrgSearch(unittest.TestCase):
     	logout.submit()
 
     	#see if user was logged out
-    	driver.getPageSource().contains("You have successfully logged out")
+    	source = driver.page_source
+    	found = re.search(r'You have successfully logged out', source)
+    	value = self.assertNotEqual(found, None)
 
     def test_register(self):
     	driver = self.driver
     	driver.get('web:8000/register/')
 
     	# find form fields
-    	username = driver.find_element_by_id('"id_username"')
+    	username = driver.find_element_by_id("id_username")
     	name = driver.find_element_by_id("id_display_name")
     	email = driver.find_element_by_id("id_email")
     	password = driver.find_element_by_id("id_password")
@@ -83,18 +85,24 @@ class PythonOrgSearch(unittest.TestCase):
     	password.send_keys("none1")
     	register.submit()
 
-    	#login with registered user
-    	login_username = driver.find_element_by_id("id_username")
-    	login_password = driver.find_element_by_id("id_password")
-    	submit = driver.find_element_by_id("id_login")
-    	login_username.clear()
-    	login_password.clear()
-    	login_username.send_keys("none1")
-    	login_password.send_keys("none1")
-    	submit.submit()
+    	source = driver.page_source
+    	found = re.search(r'Need to create an account\?', source)
+    	value = self.assertNotEqual(found, None)
 
-    	#see if the user got logged in
-    	driver.getPageSource().contains("Welcome to the homepage")
+    	#login with registered user
+    	# login_username = driver.find_element_by_id("id_username")
+    	# login_password = driver.find_element_by_id("id_password")
+    	# submit = driver.find_element_by_id("id_login")
+    	# login_username.clear()
+    	# login_password.clear()
+    	# login_username.send_keys("none1")
+    	# login_password.send_keys("none1")
+    	# submit.submit()
+
+    	# #see if the user got logged in
+    	# source = driver.page_source
+    	# found = re.search(r'Welcome to the homepage', source)
+    	# value = self.assertNotEqual(found, None)
 
     def test_add_post(self):
     	driver = self.driver
@@ -104,7 +112,7 @@ class PythonOrgSearch(unittest.TestCase):
     	login_username = driver.find_element_by_id("id_username")
     	login_password = driver.find_element_by_id("id_password")
     	submit = driver.find_element_by_id("id_login")
-    	login_username.clear()
+    	login_sername.clear()
     	login_password.clear()
     	login_username.send_keys("none")
     	login_password.send_keys("none")
@@ -135,7 +143,9 @@ class PythonOrgSearch(unittest.TestCase):
     	submit_post.submit()
 
     	#see if it worked
-    	driver.getPageSource().contains("$10.0 This should appear test")
+    	source = driver.page_source
+    	found = re.search(r'\$10.0 This should appear test', source)
+    	value = self.assertNotEqual(found, None)
 
     def testSearchPost(self):
     	driver = self.driver
