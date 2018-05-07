@@ -43,7 +43,7 @@ def post_detail(request, id):
         except ObjectDoesNotExist:
             context = response
     # context = response
-    return JsonResponse(context)
+    return JsonResponse(response)
 
 
 # see if authenticator is in database

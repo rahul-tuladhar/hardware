@@ -13,14 +13,14 @@ print('true1')
 
 while True:
     print('true2')
-    with open("data.txt", "a+") as data:
-        print('true3')
-        for message in consumer:
+    for message in consumer:
+        with open("data.txt", "a+") as data:
+            print('true3')
             new_consumer = json.loads(message.value.decode('utf-8'))
             print(new_consumer)
             print(new_consumer['result']['id'])
             print(new_consumer['user_id'])
             item_id = new_consumer['result']['id']
             user_id = new_consumer['user_id']
-            data.write("%s \t %s" % (user_id, item_id))
-    data.close()
+            data.write("%s \t %s \n" % (user_id, item_id))
+
