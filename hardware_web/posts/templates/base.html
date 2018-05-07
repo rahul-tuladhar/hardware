@@ -43,8 +43,8 @@
           </li>
         </ul>
         <form action="{% url 'search' %}" method="get" class="form-inline my-2 my-lg-0">
-          <input class="form-control mr-sm-2" name="q" type="search" placeholder="Search" aria-label="Search">
-          <button class="btn btn-outline-success my-2 my-sm-0" type="submit">Search</button>
+          <input class="form-control mr-sm-2" name="q" type="search" placeholder="Search" aria-label="Search" id="id_search_field">
+          <button class="btn btn-outline-success my-2 my-sm-0" type="submit" id="id_search">Search</button>
         </form>
           <a class="btn btn-info btn-sm" href="{% url 'login' %}">Login</a>
 {#          <a class="btn btn-info btn-sm" href="{% url 'logout' %}">Logout</a>#}
