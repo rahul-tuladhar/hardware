@@ -28,6 +28,7 @@ before_script:
   - docker-compose -f docker-compose.yml up -d
 
 script:
-  - docker exec -it hardware_models_1 bash -c "pip install requests && pip install django_widget_tweaks && pip install django_filter && ./manage.py test"
+  - docker exec -it hardware_models_1 bash -c "pip install requests && pip install django_widget_tweaks && pip install django_filter && ./manage.py test";
+  - docker exec -it selenium-test bash -c "pip install requests && pip install django_widget_tweaks && pip install django_filter && ./selenium_test_script.py"
 notifications:
   email: false
