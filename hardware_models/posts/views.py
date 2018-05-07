@@ -90,8 +90,8 @@ def check_auth(request):
         auth = request.COOKIES.get('authenticator')
 
         try:
-            Authenticator.objects.get(auth=auth)
-            context = {'status': True}
+            auth = Authenticator.objects.get(auth=auth)
+            context = {'status': True, 'user_id': auth.user_id}
             return JsonResponse(context)
 
         # if user not found

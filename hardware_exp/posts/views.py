@@ -1,6 +1,7 @@
 from django.http import JsonResponse, HttpResponse
 from django.views.decorators.csrf import csrf_exempt
 from django.contrib.auth.hashers import is_password_usable
+from django.core.exceptions import ObjectDoesNotExist
 from elasticsearch import Elasticsearch
 from kafka import KafkaProducer
 import json
@@ -27,9 +28,22 @@ def search_posts(request):
 def post_detail(request, id):
     # get json response
     req = requests.get('http://models-api:8000/api/post_detail/' + str(id))
-    context = req.json()
-    
-    return JsonResponse(context)
+    response = req.json()
+    if req.status_code == 200:
+        result = requests.get('http://models-api:8000/api/check_auth/', cookies=request.COOKIES).json()
+        print(result)
+        try:
+            if result['status']:
+                context = dict()
+                context['user_id'] = result['user_id']
+                context['result'] = req.json()
+                producer = KafkaProducer(bootstrap_servers='kafka:9092')
+                producer.send('co-view-topic', json.dumps(context).encode('utf-8'))
+                context['status'] = True
+        except ObjectDoesNotExist:
+            context = response
+    # context = response
+    return JsonResponse(response)
 
 
 # see if authenticator is in database
@@ -69,9 +83,6 @@ def add_post(request):
             context = req.json()
             producer = KafkaProducer(bootstrap_servers='kafka:9092')
             producer.send('new-listings-topic', json.dumps(context).encode('utf-8'))
-            # TODO: implemented indexing here until we fix batch container
-            # es = Elasticsearch(['es'])
-            # es.index(index='listing_index', doc_type='listing', id=context['result']['id'], body=context['result'])
         else:
             context = {'status': False, 'error': 'reqs raised a 500 error'}
         return JsonResponse(context, safe=False)
