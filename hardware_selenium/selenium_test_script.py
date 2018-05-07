@@ -143,7 +143,7 @@ class PythonOrgSearch(unittest.TestCase):
     	found = re.search(r'Selenium test', source)
     	value = self.assertNotEqual(found, None)
 
-    def testSearchPost(self):
+    def test_search_post(self):
     	driver = self.driver
     	driver.get('web:8000/login/')
 
