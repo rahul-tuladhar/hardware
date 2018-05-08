@@ -115,7 +115,7 @@ class PythonOrgSearch(unittest.TestCase):
     	submit.submit()
 
     	#find the add post page
-    	add_post = driver.findElement(By.linkText("Add Post")).click()
+    	add_post = driver.find_element_by_link_text("Add Post").send_keys(Keys.RETURN)
 
     	#find fields of post
     	title = driver.find_element_by_id("id_title")
@@ -153,7 +153,7 @@ class PythonOrgSearch(unittest.TestCase):
 
         #see if it worked
         source = driver.page_source
-        found = re.search(r'No results', source)
+        found = re.search(r'Search Results', source)
         value = self.assertNotEqual(found, None)
 
     def tearDown(self):

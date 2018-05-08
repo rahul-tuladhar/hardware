@@ -88,8 +88,8 @@ for key, value in rec_lists.items():
 # commit changes
 db.commit()
 
-# c.execute("select * from posts_recommendation")
-# print(c.fetchall())
+c.execute("select * from posts_recommendation")
+print(c.fetchall())
 
 db.close()
 
