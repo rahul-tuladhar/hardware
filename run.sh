@@ -12,6 +12,6 @@ pip install mysqlclient &&
 apt-get install python-mysqldb"
 
 while [[ true ]]; do
-	docker exec -it spark-master bin/spark-submit --master spark://spark-master:7077 --total-executor-cores 2 --executor-memory 1024m /tmp/data/spark.py
+	docker exec -it spark-master bin/spark-submit --master spark://spark-master:7077 --total-executor-cores 2 --executor-memory 4096M /tmp/data/spark.py
 	sleep 120
 done
