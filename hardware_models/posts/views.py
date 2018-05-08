@@ -59,7 +59,7 @@ def post_detail(request, id):
             post_dict['rec_ids'] = rec_list
             item_tuples = []
             for i in range(len(item_list)):
-                tuple = (i,rec_list[i],item_list[i])
+                tuple = (i,int(rec_list[i]),item_list[i])
                 item_tuples.append(tuple)
             post_dict['tuples'] = item_tuples
         except ObjectDoesNotExist:
