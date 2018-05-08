@@ -16,10 +16,12 @@
 
   <!-- Recommendation stuff -->
   {% if tuples %}
-    Recommendations:
+    <h5>Recommendations:</h5>
     {% for tuple in tuples %}
       <br>
       <a href="{% url 'post_detail' tuple.1 %}">{{tuple.2}}</a>
     {% endfor %}
+  {% else %}
+    <h5>No recommendations (yet!)</h5>
   {% endif %}
 {% endblock %}
