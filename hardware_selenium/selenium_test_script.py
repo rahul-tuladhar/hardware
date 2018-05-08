@@ -115,8 +115,7 @@ class PythonOrgSearch(unittest.TestCase):
     	submit.submit()
 
     	#find the add post page
-    	add_post = driver.find_element_by_id("add_post")
-    	add_post.submit()
+    	add_post = driver.findElement(By.linkText("Add Post")).click()
 
     	#find fields of post
     	title = driver.find_element_by_id("id_title")
@@ -144,13 +143,12 @@ class PythonOrgSearch(unittest.TestCase):
     	value = self.assertNotEqual(found, None)
 
     def test_search_post(self):
-    	driver = self.driver
-    	driver.get('web:8000/login/')
+        driver = self.driver
+        driver.get("web:8000/home/")
 
-        #search something
         search_field = driver.find_element_by_id("id_search_field")
         search = driver.find_element_by_id("id_search")
-        serach_field.send_keys("a")
+        search_field.send_keys("a")
         search.submit()
 
         #see if it worked
