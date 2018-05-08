@@ -15,9 +15,11 @@
 	{% endif %}
 
   <!-- Recommendation stuff -->
-  Recommendations:
-  {% for tuple in tuples %}
-    <br>
-    <a href="{% url 'post_detail' {{tuple.1}}">{{tuple.2}}</a>
-  {% endfor %}
+  {% if tuples %}
+    Recommendations:
+    {% for tuple in tuples %}
+      <br>
+      <a href="{% url 'post_detail' tuple.1 %}">{{tuple.2}}</a>
+    {% endfor %}
+  {% endif %}
 {% endblock %}

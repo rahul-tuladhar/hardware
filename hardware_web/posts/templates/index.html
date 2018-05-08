@@ -1,6 +1,6 @@
 {% extends 'base.html' %}
 {% block content %}
-<br> 
+<br>
 <h3>Welcome to the homepage</h3>
     <h1>Posts</h1>
  <a href="{% url 'add_post' %}" id="add_post">Add Post</a>
@@ -9,12 +9,10 @@
 <ul>
 	{% csrf_token %}
 	{% if data %}
-	  	{% for post in data %}
-
-		     	<p>${{ post.price }} <a href="{% url 'post_detail' post.id %}">{{post.title}}</a></p>
-                <p>{{ post.description|truncatewords:50 }}</p>
-
-	  	{% endfor %}
+  	{% for post in data %}
+     	<p>${{ post.price }} <a href="{% url 'post_detail' post.id %}">{{post.title}}</a></p>
+      <p>{{ post.description|truncatewords:50 }}</p>
+  	{% endfor %}
 	{% else %}
 		<p> No posts found </p>
 	{% endif %}
